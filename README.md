@@ -1,4 +1,4 @@
-![Screenshot 2024-06-21 at 11 06 05 AM](https://github.com/Kor-YJ/AIVLE-05-06/assets/101186255/7547eb72-33c9-45ac-8567-f01970b9dbf3)# AI기반 베리어-프리 병원 키오스크
+# AI기반 베리어-프리 병원 키오스크
 ## KT AIVLE 5기 6조 팀원: 박정민 박현일 배지현 심연준 윤석일 이승연 이정호
 ##Table of Contents
   -개발 배경 및 목적(Usage)
@@ -23,7 +23,11 @@
 5. Open a pull request
 
 ##Service Architecture
-****![Screenshot 2024-06-21 at 11 06 05 AM](https://github.com/Kor-YJ/AIVLE-05-06/assets/101186255/e958f1a9-2a61-4bb6-9191-456f6712f0d1)
+Front-End
+
+HTML	CSS	JS	Bootstrap
+html	css	js	bootstrap
+
 
 
 
