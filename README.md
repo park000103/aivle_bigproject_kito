@@ -1,4 +1,4 @@
-AI기반 베리어-프리 병원 키오스크
+#AI기반 베리어-프리 병원 키오스크
 ## KT AIVLE 5기 6조 팀원: 박정민 박현일 배지현 심연준 윤석일 이승연 이정호
 ##Table of Contents
   -개발 배경 및 목적(Usage)
@@ -15,7 +15,7 @@ AI기반 베리어-프리 병원 키오스크
 
  
 
-## Contributing
+## Contributing /수정
 1. Fork the repository
 2. Create a new branch (`git checkout -b feature/YourFeature`)
 3. Commit your changes (`git commit -m 'Add some feature'`)
@@ -38,8 +38,6 @@ AI기반 베리어-프리 병원 키오스크
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 
 
-
-
 ### Etc
 
 ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white)
@@ -48,7 +46,7 @@ AI기반 베리어-프리 병원 키오스크
 
 
 
-## User Interface 
+## User Interface  /수정 
 
 
 ## License
