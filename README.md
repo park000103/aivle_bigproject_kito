@@ -3,9 +3,13 @@
 ##Table of Contents
   
   -개발 배경 및 목적(Usage)
+  
   -접근 방법(Contributing)
+  
   -서비스 아키텍쳐(Architecture)
+  
   -유저 인터페이스(User Interface)
+  
   -라이센스(License)
   
 
