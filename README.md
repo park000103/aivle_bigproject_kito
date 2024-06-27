@@ -32,8 +32,8 @@
  일단 main branch나 자신의 branch에서 수정 사항이 있는지 먼저 확인  - 있으면 git pull origin "브랜치 명"
  
 1. git checkout "브랜치명"  
-2.git add . ( 수정된 파일을 스테이징 영역에 추가)
-3.. git commit -m "커밋 이름"
+2. git add . ( 수정된 파일을 스테이징 영역에 추가)
+3. git commit -m "커밋 이름"
 4. git push origin "자신의 브랜치 명"
 
 ## 가상환경 세팅하는 방법 
