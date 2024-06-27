@@ -33,7 +33,7 @@
 2. git commit -m "커밋 이름"
 3. git push origin "자신의 브랜치 명"
 
-가상환경 세팅하는 방법 
+## 가상환경 세팅하는 방법 
 1. anaconda / python설치
 2. conda create -n <가상환경 이름> python=3.11
 3. conda env list : 아나콘다에 존재하는 가상환경 리스트를 확인
