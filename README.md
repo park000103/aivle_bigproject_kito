@@ -28,6 +28,11 @@
 4. Push to the branch (`git push origin feature/YourFeature`)
 5. Open a pull request
 
+## 깃허브 올리는법 
+1. git add . ( 수정된 파일을 스테이징 영역에 추가)
+2. git commit -m "커밋 이름"
+3. git push origin "자신의 브랜치 명"
+
 가상환경 세팅하는 방법 
 1. anaconda / python설치
 2. conda create -n <가상환경 이름> python=3.11
