@@ -19,7 +19,7 @@
  This project is for those who aren't familar to Kiosk or unable to use freely because of their ablity
  We provide AI-bot so we can expend their accessbility and made User Interface more friendly. 
 
- 
+
 
 ## 가상환경 세팅하는 방법 
 1. anaconda / python설치
