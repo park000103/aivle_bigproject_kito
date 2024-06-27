@@ -28,6 +28,15 @@
 4. Push to the branch (`git push origin feature/YourFeature`)
 5. Open a pull request
 
+가상환경 세팅하는 방법 
+1. anaconda / python설치
+2. conda create -n <가상환경 이름> python=3.11
+3. conda env list : 아나콘다에 존재하는 가상환경 리스트를 확인
+4. conda activate <가상환경 이름>
+5. pip install -r requirements.txt
+6. ipyb 파일에서 커널 선택하여 내가 생성한 가상환경 연결
+
+
 # 기술 스택 🐕
 
 ## Front-End
