@@ -13,12 +13,10 @@
   
   -라이센스(License)
   
-
 ## Usage 
  이 프로젝트는 키오스크를 사용에 있어서 익숙하지 않거나, 이용할 수 없는 상태의 사람들을 위한 베리어 프리 키오스크입니다. AI 챗봇을 이용 하여 접근성을 좋게 만들고 UI환경도 개선 시켰습니다. 
  This project is for those who aren't familar to Kiosk or unable to use freely because of their ablity
  We provide AI-bot so we can expend their accessbility and made User Interface more friendly. 
-
 
 
 ## 가상환경 세팅하는 방법 
