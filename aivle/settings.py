@@ -26,6 +26,10 @@ SECRET_KEY = 'django-insecure-%k%1a1i$2pr^om71m--qzl)#a2-4-)%gzyx6=l6keh_t1!s^@1
 DEBUG = True
 
 ALLOWED_HOSTS = []
+#AUTH_USER_MODEL = 'accounts.User'  # yourapp을 실제 앱 이름으로 대체하세요
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 
 # Application definition
@@ -37,6 +41,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    "accounts",
+    'consultations',
+    'departments',
+    'doctors',
+    'patients',
+    'payments',
+    'prescriptions',
+    'reservations',
+    'chatbot',
+    
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +70,7 @@ ROOT_URLCONF = 'aivle.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -103,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko-kr'
 
 TIME_ZONE = 'UTC'
 
