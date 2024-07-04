@@ -39,6 +39,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'patients' # db에 migrations하려면 여기에 추가해줘야함
+    # 'chatbot',
+    # 'consultations',
+    # 'departmenets',
+    # 'doctors',
+    # 'payments'
+    # 'prescriptions',
+    # 'reservations',
+    
+
 ]
 
 MIDDLEWARE = [
@@ -79,6 +90,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'OPTIONS':{
+            'timeout':20,
+        }
     }
 }
 
