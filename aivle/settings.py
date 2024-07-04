@@ -26,10 +26,10 @@ SECRET_KEY = 'django-insecure-%k%1a1i$2pr^om71m--qzl)#a2-4-)%gzyx6=l6keh_t1!s^@1
 DEBUG = True
 
 ALLOWED_HOSTS = []
-#AUTH_USER_MODEL = 'accounts.User'  # yourapp을 실제 앱 이름으로 대체하세요
+AUTH_USER_MODEL = 'accounts.User'  # yourapp을 실제 앱 이름으로 대체하세요
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+# LOGIN_REDIRECT_URL = '/'
+# LOGOUT_REDIRECT_URL = '/'
 
 
 # Application definition
