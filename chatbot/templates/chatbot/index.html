@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Chat</h1>
+    <div id="chat-log2">
+        <div>{{initial_message}}</div>
+    </div>
+    <div id="chat-log">
+        <div></div>
+    </div>
+    <input type="text" id="chat-message-input" autocomplete="off" placeholder="Type your message here...">
+    <button id="chat-message-submit">Send</button>
+
+    <script>
+        $(document).ready(function() {
+            $('#chat-message-submit').click(function() {
+                sendMessage();
+            });
+    
+            $('#chat-message-input').keypress(function(e) {
+                if (e.which == 13) {  // Enter key
+                    sendMessage();
+                }
+            });
+    
+            function sendMessage() {
+                var message = $('#chat-message-input').val();
+                $.ajax({
+                    url: '/chatbot/send_message/',
+                    method: 'POST',
+                    data: {
+                        'message': message,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(data) {
+                        console.log(data); // 받아온 데이터를 콘솔에 출력
+                        
+                        $('#chat-log').append('<div><strong>You:</strong> ' + message + '</div>');
+                        if (data.message) {
+                            //data.messages.forEach(function(responseMessage) {
+                            //    $('#chat-log').append('<div><strong>Bot:</strong> ' + responseMessage + '</div>');
+                            //});
+                            $('#chat-log').append('<div><strong>Bot:</strong> ' + data.message + '</div>');
+                        }
+                        $('#chat-message-input').val('');
+                    },
+                    error: function(error) {
+                        console.error("Error:", error);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
