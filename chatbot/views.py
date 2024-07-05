@@ -81,17 +81,13 @@ def send_message(request):
                 if isinstance(data, list):
                     for item in data:
                         if 'message' in item.get('payload', {}):
-                           # messages.append(item['payload']['message'])
-                            return JsonResponse({'message': item['payload']['message']})
+                           messages.append(item['payload']['message'])
                 elif isinstance(data, dict) and 'message' in data.get('payload', {}):
-                    #messages.append(data['payload']['message'])
-                    return JsonResponse({'message': data['payload']['message']})
-                #return JsonResponse({'messages': messages})
+                    messages.append(data['payload']['message'])
+                return JsonResponse({'messages': messages})
             except ValueError as e:
                 return JsonResponse({'error': 'Invalid JSON response from API'}, status=500)
         else:
             return JsonResponse({'error': 'Failed to interact with Voiceflow API'}, status=response.status_code)
-        
-        
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)  # POST 요청이 아닐 경우 에러 처리

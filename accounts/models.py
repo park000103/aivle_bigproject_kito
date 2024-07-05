@@ -17,10 +17,10 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(user_id, password, **extra_fields)
 
 class User(AbstractBaseUser):
-    user_id = models.CharField(max_length=200, unique=True)
-    name = models.CharField("이름", max_length=50)
+    user_id = models.CharField(max_length=200, unique=True,verbose_name="아이디")
+    name = models.CharField(verbose_name="이름", max_length=50)
     password = models.CharField(verbose_name="비밀번호", max_length=255)
-    is_approved = models.IntegerField(default=0)
+    is_approved = models.IntegerField(default=0,verbose_name="승인여부")
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
@@ -57,3 +57,4 @@ class User(AbstractBaseUser):
         return "승인 대기 중"
     class Meta:
         verbose_name = "병원 관계자"
+        verbose_name_plural = "병원 관계자들"

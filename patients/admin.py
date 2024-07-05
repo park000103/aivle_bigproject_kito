@@ -4,4 +4,14 @@ from .models import *
 
 # Register your models here.
 
-admin.site.register(Patient)
+@admin.register(Patient)
+class PatientAdmin(admin.ModelAdmin):
+    list_display = ('patient_name', 'patient_birth', 'patient_bday')
+    search_fields = ('patient_name',)
+    list_filter = ('patient_birth',)
+
+    fieldsets = (
+        (None, {
+            'fields': ('patient_name', 'patient_birth', 'patient_bday')
+        }),
+    )

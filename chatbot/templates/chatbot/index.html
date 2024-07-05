@@ -38,13 +38,13 @@
                     },
                     success: function(data) {
                         console.log(data); // 받아온 데이터를 콘솔에 출력
-                        
+                    
                         $('#chat-log').append('<div><strong>You:</strong> ' + message + '</div>');
-                        if (data.message) {
-                            //data.messages.forEach(function(responseMessage) {
-                            //    $('#chat-log').append('<div><strong>Bot:</strong> ' + responseMessage + '</div>');
-                            //});
-                            $('#chat-log').append('<div><strong>Bot:</strong> ' + data.message + '</div>');
+                        if (data.messages) {
+                            data.messages.forEach(function(responseMessage) {
+
+                                $('#chat-log').append('<div><strong>Bot:</strong> ' + responseMessage + '</div>');
+                            });
                         }
                         $('#chat-message-input').val('');
                     },
