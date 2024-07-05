@@ -10,10 +10,15 @@ class Reservation(models.Model): #예약
         (3, '불참'),
     )
     
-    reservation_date = models.DateTimeField()
-    patient_id = models.ForeignKey(Patient,on_delete=models.CASCADE)
-    doctor_id =models.ForeignKey(Doctor,on_delete=models.CASCADE)
-    reservation_status = models.IntegerField(choices=RESERVATION_STATUS_CHOICES)
+    reservation_date = models.DateTimeField(verbose_name="예약 날짜")
+    patient_id = models.ForeignKey(Patient,on_delete=models.CASCADE,verbose_name="환자이름")
+    doctor_id =models.ForeignKey(Doctor,on_delete=models.CASCADE,verbose_name="의사")
+    reservation_status = models.IntegerField(choices=RESERVATION_STATUS_CHOICES,verbose_name="예약 상태")
+    
+    def __str__(self):
+        return f"{self.patient_id} - {self.doctor_id} ({self.get_reservation_status_display()})"
+    
     class Meta:
         db_table = "reservation"
         verbose_name = "예약"
+        verbose_name_plural = "예약들"
