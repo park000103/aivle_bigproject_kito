@@ -1,27 +1,60 @@
 from django.shortcuts import render
+
+from .models import Reservation
+from departments.models import Departments
+from django.http import HttpResponse
 import json
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .km_bert_model import specialty_predict
 
-@csrf_exempt
-def get_recommendation(request):
+# Create your views here.
+def reservations_list(request):
+    # reserv = Reservation.objects.all()
+    # print(request.POST)
+    # print(request.POST.get('selected_patient'))
+    print(request.GET)
+    print(request.GET.get('selected_patient'))
+    # print(type(request.POST.get('selected_patient')))
+    # a = request.POST.get('selected_patient', 0)
+    a = request.GET.get('selected_patient', 0)
+    print(a)
+    reserv = Reservation.objects.filter(patient_id=int(a))
+    print(reserv)
+    
+    # json 형식으로 맞추는 과정
+    reserv_data = list(reserv.values('id', 'reservation_date', 'patient_id', 'doctor_id', 'reservation_status'))
+    
+    for reserv in reserv_data:
+        reserv['reservation_date'] = reserv['reservation_date'].isoformat() if reserv['reservation_date'] else None
+    
+    json_data = json.dumps(reserv_data)
+    print("json_data!!" ,json_data)
+    # content_type을 명시하기 위한 과정
+    response = HttpResponse(json_data, content_type='application/json')
+    return response
+    # return render(request, 'reservations/reservations_list.html', {'reservations': reserv, 'patient_id': a})
+
+# 조회된 예약을 보여주기 위한 페이지 로드, json 데이터 전달
+def reservations_list_page(request):
+    print('reservations_list_page', request)
+    json_data = request.GET.get('json_data', '{}')
+    patient_id = request.GET.get('patient_id', '-1')
+    reservations = json.loads(json_data)
+    print('reservations_list_page', reservations)
+    return render(request, 'reservations/reservations_list.html', {'reservations': reservations, 'patient_id': patient_id})
+
+def add_reservations(request):
     if request.method == 'POST':
-        try:
-            body = json.loads(request.body)
-            user_symptom = body.get('symptom')
-            if not user_symptom:
-                return JsonResponse({'error': 'No symptom provided'}, status=400)
-
-            departments, probs = specialty_predict(user_symptom)
-            response = {
-                'recommended_departments': departments.split(', '),
-                'probabilities': probs.tolist()
-            }
-            return JsonResponse(response)
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-            return JsonResponse({'error': str(e)}, status=500)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
-
+        test = request.POST
+        print(test)
+        print(test.get('patient_id'))
+        return render(request, 'index.html')
+    else :
+        depart = Departments.objects.all()
+        print(depart)
+        patient_id = request.GET.get('patient_id')
+        # json_data = request.GET.get('json_data', '{}')
+        # patient_id = json.loads(json_data)
+        print('~~~~~~~~~~~~~~~~~~~~~~')
+        print('request', request.GET)
+        print('patient_id', patient_id)
+        
+        return render(request, 'reservations/add_reservations.html', {'departments': depart, 'patient_id': patient_id})  

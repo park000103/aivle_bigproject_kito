@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+          height: 88%;
+        }
+        body {
+            background-color: #e6f0f7;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 300px;
+            margin-bottom: 300px;
+            height: 100%;
+        }
+        .box{
+            height: 35%;
+        }
+        .icon-card {
+            text-align: center;
+            height: 80%;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background-color: white;
+            margin: 10px;
+        }
+        .icon-card:hover {
+            background-color: #24AAF5;
+        }
+        #box_new {
+            margin-bottom: 60px;
+        }
+        img {
+            height: 192px;
+        }
+        p {
+            font-size: 50px;
+            margin: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+    <div class='container'>
+        <div class="box" id='box_new'>
+            <div class="icon-card" id="new"> 
+                <img src="https://img.icons8.com/color/96/000000/nurse-female.png" alt="신규">
+                <p>신규</p>
+            </div>
+        </div>
+        <div class="box">
+            <div class="icon-card" id="re"> 
+                <img src="https://img.icons8.com/color/96/000000/nurse-female.png" alt="재방문">
+                <p>재방문</p>
+            </div>
+        </div>
+    </div>
+    {% include 'footer.html' %}
+
+    <script>
+        var ne = document.getElementById('new')
+        var re = document.getElementById('re')
+
+        ne.addEventListener('click', function(event){
+            alert('신규')
+            window.location.href='/patients/new_patient'
+        })
+        re.addEventListener('click', function(event){
+            alert('재방문')
+            window.location.href='/patients/search_patient'
+        })
+    </script>
+</body>
+
+</html>

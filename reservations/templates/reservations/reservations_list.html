@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+          height: 100%;
+        }
+        body {
+            background-color: #e6f0f7;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 250px;
+            margin-bottom: 250px;
+            height: 100%;
+        }
+
+    </style>
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+    <div class='container'>
+        <h1>Reservation List</h1>
+        {% if reservations|length > 0 %}
+            <form method="get" action="department_map" id='myForm'>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>선택</th>
+                            <th>Date</th>
+                            <th>ID</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in reservations %}
+                            <tr>
+                                <td><input type="radio" name="selected_reservation" value="{{ reservation.id }}" onclick="toggleRadio(this)"></td>
+                                <td>{{ reservation.reservation_date|date:"Y-m-d" }}</td>
+                                <td>{{ reservation.patient.id }}</td>
+                                <td>{{ reservation.patient.patient_name }}</td>
+                                <td>{{ reservation.doctor.doctor_name }}</td>
+                                <td>{{ reservation.reservation_state }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type='button' onclick='check_radio()'>에약 확인</button>
+            </form>
+        {% else %}
+            <form method="get" action="/reservations/add_reservations" id='myForm1'>        
+                    <p> 예약 내역이 없습니다</p>
+                    <p> 진료를 원하시면 예약을 진행해 주세요</p>
+                    <input type='hidden' value='{{ patient_id }}' id='patient_id' name='patient_id'/>
+                    <button type='submit'>예 약</button>
+            </form> 
+        {% endif %}
+    </div>
+    {% include 'footer.html' %}
+
+    <script>
+        function toggleRadio(radio) {
+            if (radio.wasChecked) {
+                radio.checked = false;
+            }
+            // Toggle the `wasChecked` state
+            radio.wasChecked = radio.checked;
+        }
+        function check_radio(){
+            radios = document.getElementsByName('selected_reservation');
+            checked = false;
+
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    checked = true;
+                    break;
+                }
+            }
+            if (checked) {
+                document.getElementById('myForm').submit();
+            } else {
+                alert('예약을 선택해주세요');
+            }
+        }
+    </script>
+</body>
+
+</html>

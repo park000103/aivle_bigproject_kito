@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+          height: 88%;
+        }
+        body {
+            background-color: #e6f0f7;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 300px;
+            margin-bottom: 300px;
+            height: 100%;
+        }
+        p {
+            font-size: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+    <div class='container'>
+        <p>개인 정보 등록을 위해 원무과를 방문해주세요</p>
+        <p>원무과 위치 지도</p>
+    </div>
+    {% include 'footer.html' %}
+</body>
+
+</html>

@@ -1,7 +1,8 @@
 from django.urls import path
 from . import views
-from .views import get_recommendation
 
 urlpatterns = [
-    path('recommend/', get_recommendation, name='get_recommendation'),
+    path('reservations_list', views.reservations_list),
+    path('reservations_list_page', views.reservations_list_page),
+    path('add_reservations', views.add_reservations),
 ]

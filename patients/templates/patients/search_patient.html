@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Keyboard Korean Layout</title>
+    <link rel="stylesheet" href="https://unpkg.com/simple-keyboard/build/css/index.css">
+    <style>
+        html,
+        body {
+          height: 100%;
+        }
+
+        body {
+            background-color: #e6f0f7;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            margin-top: 250px;
+            margin-bottom: 250px;
+            height: 100%;
+        }
+
+        .input {
+            margin-bottom: 20px;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .hg-theme-default .hg-button {
+            height: 100px;
+        }
+
+        #keyboard {
+            height: 540px;
+            font-size: 40px;
+        }
+
+        p {
+            font-size: 50px;
+            margin: 10px;
+        }
+        .input-container {
+            display: flex; /* flex 컨테이너로 설정하여 내부 요소들을 가로로 정렬 */
+        }
+        #input1, #input2, #input3, #input4 {
+            font-size: 50px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class='container'>
+        <form name="patient" method="get" id="myForm" action="/patients/patient_list">
+            <p> 이 름 </p>
+            <input class="input" id="input1" name='patient_name' value='환자1' required/>
+            <br>
+            <p> 생년월일 </p>
+            <div class="input-container">
+                <input class="input" id="input2" type="number" name='year' min='1800' max='2055' value='1997' required/>
+                <input class="input" id="input3" type="number" name='month' min='1' max = '12' value='9' required/>
+                <input class="input" id="input4" type="number" name='day' min='1' max = '31' value='5' required/>
+            </div>
+            <input type="hidden" id="patient_birth" name='patient_birth'/>
+            <button type="button" id="send_button" onclick='send_patient()'>확인</button>         
+        </form>
+        <div id="keyboard" class="simple-keyboard"></div>
+    </div>
+
+    <script src="https://unpkg.com/simple-keyboard/build/index.js"></script>
+    <script src="https://unpkg.com/hangul-js" type="text/javascript"></script>
+    <script>
+        const Keyboard = window.SimpleKeyboard.default;
+        const Hangul = window.Hangul;
+
+        let currentInput = null; // 현재 활성화된 입력 필드
+        let hangulInput = [];
+        let assembledInput = "";
+
+        const keyboard = new Keyboard({
+            onKeyPress: button => onKeyPress(button),
+            layout: {
+                'default': [
+                    '1 2 3 4 5 6 7 8 9 0',
+                    'ㅂ ㅈ ㄷ ㄱ ㅅ ㅛ ㅕ ㅑ ㅐ ㅔ',
+                    'ㅁ ㄴ ㅇ ㄹ ㅎ ㅗ ㅓ ㅏ ㅣ',
+                    'ㅋ ㅌ ㅊ ㅍ ㅠ ㅜ ㅡ {bksp}',
+                    '{shift} {space} {enter}'
+                ],
+                'shift': [
+                    '1 2 3 4 5 6 7 8 9 0',
+                    'ㅃ ㅉ ㄸ ㄲ ㅆ ㅛ ㅕ ㅑ ㅒ ㅖ',
+                    'ㅁ ㄴ ㅇ ㄹ ㅎ ㅗ ㅓ ㅏ ㅣ',
+                    'ㅋ ㅌ ㅊ ㅍ ㅠ ㅜ ㅡ {bksp}',
+                    '{shift} {space} {enter}'
+                ]
+            },
+            display: {
+                '{bksp}': '삭제',
+                '{enter}': '확인',
+                '{shift}': '쉬프트',
+                '{space}': '공백'
+            },
+            mergeDisplay: true
+        });
+
+        document.querySelectorAll('.input').forEach(input => {
+            input.addEventListener('focus', event => {
+                currentInput = event.target.id; // 현재 활성화된 입력 필드를 저장
+                hangulInput = [];
+                assembledInput = event.target.value; // 기존 입력값을 불러옴
+            });
+        });
+
+        function onKeyPress(button) {
+            if (button === "{shift}" || button === "{lock}") handleShift();
+            else if (button === "{bksp}") handleBackspace();
+            else if (button === "{enter}") handleEnter();
+            else if (button === "{space}") handleSpace();
+            else handleInput(button);
+        }
+
+        function handleShift() {
+            let currentLayout = keyboard.options.layoutName;
+            let shiftToggle = currentLayout === "default" ? "shift" : "default";
+            keyboard.setOptions({ layoutName: shiftToggle });
+        }
+
+        function handleBackspace() {
+            if (hangulInput.length > 0) {
+                hangulInput.pop();
+                updateInput();
+            } else if (assembledInput.length > 0) {
+                assembledInput = assembledInput.slice(0, -1);
+                updateDisplayInput();
+            }
+        }
+
+        function handleEnter() {
+            // Enter key functionality can be customized here
+        }
+
+        function handleSpace() {
+            hangulInput.push(' ');
+            updateInput();
+        }
+
+        function handleInput(button) {
+            hangulInput.push(button);
+            updateInput();
+        }
+
+        function updateInput() {
+            assembledInput = Hangul.assemble(hangulInput);
+            updateDisplayInput();
+        }
+
+        function updateDisplayInput() {
+            if (currentInput) {
+                document.querySelector(`#${currentInput}`).value = assembledInput;
+                keyboard.setInput(assembledInput);
+            }
+        }
+
+        function toQueryString(params) {
+            return '?' + Object.keys(params)
+                .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+                .join('&');
+        }
+        
+        function send_patient() {
+            year = document.getElementById('input2').value;
+            minYear = document.getElementById('input2').min;
+            maxYear = document.getElementById('input2').max;
+
+            month = document.getElementById('input3').value - 1;
+            minMonth = document.getElementById('input3').min - 1;
+            maxMonth = document.getElementById('input3').max - 1;
+
+            day = document.getElementById('input4').value;
+            minDay = document.getElementById('input4').min;
+            maxDay = document.getElementById('input4').max;
+
+            dateObject = new Date(year, month, day);
+
+            dateFormat = dateObject.getFullYear() + '-' + (dateObject.getMonth()+1) + '-' + dateObject.getDate()
+
+            year = Number(year)
+            minYear = Number(minYear)
+            maxYear = Number(maxYear)
+
+            month = Number(month)
+            minMonth = Number(minMonth) 
+            maxMonth = Number(maxMonth)
+
+            day = Number(day);
+            minDay = Number(minDay);
+            maxDay = Number(maxDay);
+
+            if ((year >= minYear && year <= maxYear) &&
+            (month >= minMonth && month <= maxMonth) &&
+            (day >= minDay && day <= maxDay)) {
+                document.getElementById('patient_birth').value = dateFormat;
+                alert(`Hidden field value: ${patient_birth.value}`);
+
+                const form = document.getElementById('myForm');
+                const formData = new FormData(form);
+                const jsonObject = {};
+
+                formData.forEach((value, key) => {
+                    jsonObject[key] = value;
+                });
+
+                const jsonString = JSON.stringify(jsonObject);
+                alert(jsonObject);
+                alert(jsonString);
+
+                url = 'https://f855-14-36-58-174.ngrok-free.app/patients/patient_list' + toQueryString(jsonObject);
+                alert(toQueryString(jsonObject))
+                fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    alert(data);
+                    // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
+                    var queryParams = new URLSearchParams();
+                    queryParams.append('json_data', JSON.stringify(data));
+        
+                    // window.location.href를 사용하여 새로운 페이지로 이동
+                    window.location.href = 'patient_list_page?' + queryParams.toString();
+                })
+                .catch(error => console.error('Error:', error));
+
+                /*
+                document.getElementById('myForm').submit();*/
+            } else {
+                alert('123123');
+            }
+        }
+
+    </script>
+    {% include 'footer.html' %}
+</body>
+</html>

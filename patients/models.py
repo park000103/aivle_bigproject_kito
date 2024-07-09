@@ -15,8 +15,12 @@ class Patient(models.Model):  # 환자
             self.patient_bday = self.patient_birth.strftime('%y%m%d')
         super(Patient, self).save(*args, **kwargs)
  
+    # def __str__(self):
+    #     return self.patient_name
+    
+    # 환자 id, 이름, 생년월일 까지 나오게...
     def __str__(self):
-        return self.patient_name
+        return f"ID: {self.id}, Name: {self.patient_name}, Birthdate: {self.patient_birth}"
  
     class Meta:
         db_table = "patient"

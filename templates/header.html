@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 15vh;
+            width: 100%;
+            z-index: 1000;  /* 항상 앞에 나옴... */
+            margin: 0px;
+            background-color: #24AAF5;
+            display: flex;
+            justify-content: space-between; /* 첫요소는 왼쪽에, 마지막요소는 오른쪽에, 나머지는 중간 배치 */
+        }
+    </style></head>
+<body>
+    <header>
+        <img src="https://img.icons8.com/color/96/000000/nurse-female.png" alt="home" id='home'>
+        <img src="https://img.icons8.com/color/96/000000/nurse-female.png" alt="prev" id='prev'>
+    </header>
+
+    <script>
+        var home = document.getElementById('home')
+        var prev = document.getElementById('prev')
+
+        home.addEventListener('click', function(event){
+            window.location.href = '/'
+        })
+        prev.addEventListener('click', function(event){
+            history.back()
+        })
+
+    </script>
+</body>
+</html>
