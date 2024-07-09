@@ -13,7 +13,7 @@ class ConsultationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Consultation
-        fields = ['id', 'consultation_date', 'department', 'total_amount']
+        fields = ['id', 'patient_id','consultation_date', 'department', 'total_amount']
 
     def get_total_amount(self, obj):
         # 기본 진료 금액
