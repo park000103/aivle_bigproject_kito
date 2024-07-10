@@ -10,9 +10,15 @@ from payments.models import Payment
 from .serializers import ConsultationSerializer
 
 class ConsultationPaymentListView(APIView):
-    def get(self, request, patient_id):
+    def get(self, request, patient_id=None):
         today = timezone.now().date()
-        consultations = Consultation.objects.filter(patient_id=patient_id, consultation_date__date=today)
+        
+        if patient_id:
+            consultations = Consultation.objects.filter(patient_id=patient_id, consultation_date__date=today)
+        else:
+            consultations = Consultation.objects.filter(consultation_date__date=today)
+        
         consultations_payment = consultations.exclude(id__in=Payment.objects.values_list('consultation_id', flat=True))
         serializer = ConsultationSerializer(consultations_payment, many=True)
+        
         return Response(serializer.data, status=status.HTTP_200_OK)

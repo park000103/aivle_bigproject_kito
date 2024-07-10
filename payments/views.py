@@ -18,11 +18,14 @@ class PaymentCreateAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PaymentListAPIView(APIView):
-    def get(self, request, patient_id):
+    def get(self, request, patient_id=None):
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
 
-        queryset = Payment.objects.filter(patient_id=patient_id)
+        if patient_id:
+            queryset = Payment.objects.filter(patient_id=patient_id)
+        else:
+            queryset = Payment.objects.all()
 
         if start_date:
             start_date = parse_date(start_date)

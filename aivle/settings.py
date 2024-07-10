@@ -44,14 +44,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'patients' # db에 migrations하려면 여기에 추가해줘야함
-    # 'chatbot',
-    # 'consultations',
-    # 'departmenets',
-    # 'doctors',
-    # 'payments'
-    # 'prescriptions',
-    # 'reservations',
-    
+    'chatbot',
+    'consultations',
+    'departmenets',
+    'doctors',
+    'payments'
+    'prescriptions',
+    'reservations',
+    'accounts',
+
 
 ]
 
@@ -124,11 +125,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ko-kr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
