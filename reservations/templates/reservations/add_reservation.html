@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Reservation</title>
+</head>
+<body>
+    <h1>예약 추가</h1>
+    <form id="add-reservation-form">
+        <input type="hidden" id="patient_id" name="patient_id" value="{{ patient_id }}">
+        <label for="symptoms">아픈 부위 또는 증상:</label>
+        <input type="text" id="symptoms" name="symptoms" required>
+        <br>
+        <button type="submit">검색</button>
+    </form>
+    <div id="recommendations"></div>
+    <div id="departments"></div>
+    <div id="doctors"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchDepartments();
+        });
+        //ai검색기능
+        document.getElementById('add-reservation-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const symptoms = document.getElementById('symptoms').value;
+
+            fetch('/reservations/recommend/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ symptom: symptoms })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    const recommendationsDiv = document.getElementById('recommendations');
+                    recommendationsDiv.innerHTML = '';
+
+                    const departments = data.recommended_departments;
+                    departments.forEach(department => {
+                        const button = document.createElement('button');
+                        button.textContent = department;
+                        button.addEventListener('click', function() {
+                            fetchDepartmentByName(department);
+                        });
+                        recommendationsDiv.appendChild(button);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+        //부서 이름으로 부서 아이디 불러오기
+        function fetchDepartmentByName(departmentName) {
+            fetch(`/departments/search_name/?name=${departmentName}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        fetchDoctors(data.id, departmentName);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+        //진료과들 불러와서 버튼으로 만들기
+        function fetchDepartments() {
+            fetch('/departments/list/')
+                .then(response => response.json())
+                .then(data => {
+                    const departmentsDiv = document.getElementById('departments');
+                    departmentsDiv.innerHTML = '<h2>진료 부서 목록</h2>';
+
+                    if (data.length > 0) {
+                        data.forEach(department => {
+                            const button = document.createElement('button');
+                            button.textContent = department.departments_name;
+                            button.addEventListener('click', function() {
+                                fetchDoctors(department.id,department.departments_name);
+                            });
+                            departmentsDiv.appendChild(button);
+                        });
+                    } else {
+                        departmentsDiv.innerHTML += '<p>등록된 진료 부서가 없습니다.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+        //버튼 클릭시 해당 과 의사리스트 불러오기
+        function fetchDoctors(departmentId,departmentName) {
+            fetch(`/doctors/list/${departmentId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const doctorsDiv = document.getElementById('doctors');
+                    doctorsDiv.innerHTML = `<h2>선택된 진료 부서의 의사 목록</h2>`;
+        
+                    if (data.length > 0) {
+                        const ul = document.createElement('ul');
+                        data.forEach(doctor => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `
+                                <p>의사 이름: ${doctor.doctor_name}</p>
+                                <p>진료 부서: ${departmentName}</p>
+                                <p>의사 설명: ${doctor.information}</p>
+                                <p>예약 수: ${doctor.reservations_count}</p>
+                                <button onclick="reserveAppointment(${doctor.id})">예약 하기</button>
+                            `;
+                            ul.appendChild(li);
+                        });
+                        doctorsDiv.appendChild(ul);
+                    } else {
+                        doctorsDiv.innerHTML += '<p>해당 부서에 등록된 의사가 없습니다.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+        //예약 추가 기능
+        function reserveAppointment(doctorId) {
+            const patientId = getQueryParam('patient_id');
+            if (!patientId) {
+                alert('환자 ID를 찾을 수 없습니다.');
+                return;
+            }
+            console.log('환자 ID:', patientId);
+            console.log('의사 ID:', doctorId);
+
+            fetch('/reservations/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ patient_id: patientId, doctor_id: doctorId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert('예약이 성공적으로 추가되었습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('예약 추가 중 오류가 발생했습니다.');
+            });
+        }
+        //url에 있는 환자아이디 가져오기
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>
