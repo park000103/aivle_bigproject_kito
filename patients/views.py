@@ -91,6 +91,7 @@ def patient_reservations(request, patient_id):
             serialized_reservation = {
                 "reservation_date": reservation.reservation_date,
                 "patient_name": patient.patient_name,
+                "patient_id": patient.id,
                 "doctor_name": reservation.doctor_id.doctor_name,
                 "reservation_status": reservation.reservation_status,
                 "id": reservation.id

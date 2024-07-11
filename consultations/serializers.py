@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.db.models import Sum
 from .models import Consultation,DetailConsultation
+from patients.serializers import PatientSerializer
+from doctors.serializers import DoctorSerializer
 
 
 # class ConsultationSerializer(serializers.ModelSerializer):
@@ -30,6 +32,8 @@ class DetailConsultationSerializer(serializers.ModelSerializer):
         fields = ['name', 'amount']
 
 class ConsultationPaySerializer(serializers.ModelSerializer):
+    patient_id = PatientSerializer(read_only=True)
+    doctor_id = DoctorSerializer(read_only=True)
     detailconsultations = DetailConsultationSerializer(many=True, read_only=True, source='detailconsultation_set')
 
     class Meta:

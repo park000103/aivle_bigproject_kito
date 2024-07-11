@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Patient</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('search-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const patientName = document.getElementById('patient-name').value;
+                const patientBirth = document.getElementById('patient-birth').value;
+
+                fetch(`/consultations/search/results/?name=${patientName}&birth=${patientBirth}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const patientsList = document.getElementById('patients-list');
+                        patientsList.innerHTML = '';
+                        if (data.length > 0) {
+                            data.forEach(patient => {
+                                const listItem = document.createElement('li');
+                                listItem.innerHTML = `
+                                    환자 번호: ${patient.id}, 이름: ${patient.patient_name}, 생년월일: ${patient.patient_birth}
+                                    <button onclick="showDateForm(${patient.id})">기간 입력</button>
+                                `;
+                                patientsList.appendChild(listItem);
+                            });
+                        } else {
+                            alert('환자 정보를 찾을 수 없습니다.');
+                        }
+                    });
+            });
+        });
+
+        function showDateForm(patientId) {
+            document.getElementById('patient-id').value = patientId;
+            document.getElementById('date-form').style.display = 'block';
+        }
+
+        function searchConsultations() {
+            const patientId = document.getElementById('patient-id').value;
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+
+            fetch(`/consultations/search/consultations/?patient_id=${patientId}&start_date=${startDate}&end_date=${endDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    const consultationsList = document.getElementById('consultations-list');
+                    consultationsList.innerHTML = '';
+                    if (data.length > 0) {
+                        data.forEach(consultation => {
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML = `
+                                번호: ${consultation.id}, 
+                                진료 번호: ${consultation.id}, 
+                                환자 번호: ${consultation.patient_id}, 
+                                이름: ${consultation.patient_name}, 
+                                의사 이름: ${consultation.doctor_name}, 
+                                진료 일시: ${new Date(consultation.consultation_date).toLocaleString()}
+                                <a href="/consultations/${consultation.id}/detail/">상세 보기</a>
+                            `;
+                            consultationsList.appendChild(listItem);
+                        });
+                    } else {
+                        alert('해당 기간 내 진료 내역이 없습니다.');
+                    }
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Search Patient</h1>
+    <form id="search-form">
+        <label for="patient-name">Enter Patient Name:</label>
+        <input type="text" id="patient-name" name="patient-name" required>
+        <br>
+        <label for="patient-birth">Enter Patient Birth Date (YYYY-MM-DD):</label>
+        <input type="date" id="patient-birth" name="patient-birth" required>
+        <br>
+        <button type="submit">Search</button>
+    </form>
+
+    <h2>Patients List</h2>
+    <ul id="patients-list">
+        <!-- Patients will be appended here -->
+    </ul>
+
+    <form id="date-form" style="display: none;">
+        <input type="hidden" id="patient-id" name="patient-id">
+        <label for="start-date">Start Date:</label>
+        <input type="date" id="start-date" name="start-date" required>
+        <br>
+        <label for="end-date">End Date:</label>
+        <input type="date" id="end-date" name="end-date" required>
+        <br>
+        <button type="button" onclick="searchConsultations()">Search Consultations</button>
+    </form>
+
+    <h2>Consultation List</h2>
+    <ul id="consultations-list">
+        <!-- Consultations will be appended here -->
+    </ul>
+</body>
+</html>
