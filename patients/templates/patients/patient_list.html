@@ -34,7 +34,7 @@
     {% include 'header.html' %}
     <div class=container>
         <h1>Patient List</h1>
-        <form method="get" action="/reservations/reservations_list" id='myForm'>
+        <form method="get" action="/patients/<int:patient_id>/reservations/" id='myForm'>
             <table>
                 <thead>
                     <tr>
@@ -97,27 +97,23 @@
                     jsonObject[key] = value;
                 });
 
-                const jsonString = JSON.stringify(jsonObject);
+                const jsonString = JSON.stringify(jsonObject);  
 
-                alert(jsonObject);
-                alert(jsonString);
-
-                url = 'https://f855-14-36-58-174.ngrok-free.app/reservations/reservations_list' + toQueryString(jsonObject);
+                int_id = Number(selected_id);
+                url = `https://56fa-180-66-16-143.ngrok-free.app/patients/${int_id}/reservations/`;
 
                 fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    alert('selected_id: ', selected_id);
-                    alert('예약으로 넘거가기 전 data 확인 : ',data);
-                    alert('예약으로 넘기기 전 data 확인: ' + JSON.stringify(data));
+
                     // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
                     var queryParams = new URLSearchParams();
                     queryParams.append('json_data', JSON.stringify(data));
                     queryParams.append('patient_id', selected_id);
         
                     // window.location.href를 사용하여 새로운 페이지로 이동
-                    window.location.href = '/reservations/reservations_list_page?' + queryParams.toString();
+                    window.location.href = '/reservations/recept_auth2?' + queryParams.toString();
                 })
                 .catch(error => console.error('Error:', error));
 

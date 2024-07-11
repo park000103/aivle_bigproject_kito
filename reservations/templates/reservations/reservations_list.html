@@ -44,11 +44,19 @@
                         {% for reservation in reservations %}
                             <tr>
                                 <td><input type="radio" name="selected_reservation" value="{{ reservation.id }}" onclick="toggleRadio(this)"></td>
-                                <td>{{ reservation.reservation_date|date:"Y-m-d" }}</td>
-                                <td>{{ reservation.patient.id }}</td>
-                                <td>{{ reservation.patient.patient_name }}</td>
-                                <td>{{ reservation.doctor.doctor_name }}</td>
-                                <td>{{ reservation.reservation_state }}</td>
+                                <td>{{ reservation.reservation_date|date:"Y년 n월 j일 G:i" }}</td>
+                                <td>{{ reservation.id }}</td>
+                                <td>{{ reservation.patient_name }}</td>
+                                <td>{{ reservation.doctor_name }}</td>
+                                {% if reservation.reservation_status == 0 %}
+                                    <td>{{ '예약됨' }}</td>
+                                {% elif reservation.reservation_status == 1 %}
+                                    <td>{{ '대기중' }}</td>
+                                {% elif reservation.reservation_status == 2 %}
+                                    <td>{{ '완료' }}</td>
+                                {% elif reservation.reservation_status == 3 %}
+                                    <td>{{ '불참' }}</td>
+                                {% endif %}
                             </tr>
                         {% endfor %}
                     </tbody>

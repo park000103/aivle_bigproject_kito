@@ -1,135 +1,84 @@
 <!DOCTYPE html>
-<html lang="ko">
+<!-- 메인메뉴 페이지 -->
+{% load static %}
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kiosk Interface</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        html,
-        body {
-          height: 100%;
-        }
-
-        div.container {
-            height: 80%;
-        }
-
-        .icon-card {
-            text-align: center;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            background-color: white;
-            margin: 10px;
-        }
-        .icon-card:hover, .chatbot:hover {
-            background-color: #24AAF5;
-        }
-        .icon-card img {
-            width: 50px;
-            height: 50px;
-            margin-bottom: 10px;
-        }
-        .chatbot {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin: 10px;
-            text-align: center;
-        }
-        body {
-            background-color: #e6f0f7;
-            font-family: Arial, sans-serif;
-        }
-
-        div.row head {
-            margin: 0px;
-            background-color: #24AAF5;
-        }
-    </style>
+    <title> KIOSK </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
-
-<div class="row head text-center">
-    <div class="col-12">
-        <div class="head">
-            <img src="https://img.icons8.com/color/96/000000/chatbot.png" alt="Chatbot">
-            <div>
-                <p>저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</p>
+    <header>
+        <div class="header_wrap">
+            <!-- <button type="button" id="home"><img src="../images/home_icon3.png" id="home-hi"></button>없는 버튼 -->
+            <div class="clock-wrap">
+                <div id="cur-day">clock</div>
+                <div id="cur-time">clock</div>
             </div>
+            <script>
+                var Target = document.getElementById("cur-day");
+                var Target2 = document.getElementById("cur-time");
+                function clock(){
+                    var time = new Date();
+                    var year = time.getFullYear();
+                    var month = time.getMonth() + 1;
+                    var date = time.getDate();
+                    var day = time.getDay();
+                    var week = ['일', '월', '화', '수', '목', '금', '토'];
+                    var hours = time.getHours();
+                    var minutes = time.getMinutes();
+                    //var seconds = time.getSeconds();
+                    
+                    //Target.innerText = `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+                    Target.innerText = `${year}-${month < 10 ? `0${month}` : month}-${date < 10 ? `0${date}` : date} (${week[day]})`;
+                    Target2.innerText = `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
+                }
+                clock();
+                setInterval(clock, 1000);
+            </script>
+            <img src="../images/title_image2.png" alt="AIVH" id="home-logo">
+            <button type="button" id="prev" onclick="moveAdmin()"><img src="../images/prev_icon3.png" id="home-pi"></button><!-- admin 페이지 이동 버튼 / 보이지 않음 -->
         </div>
+    </header>
+    <div class="section-container">
+        <section class="reception" onclick="moveRecept()">
+            <img src="../images/recept_icon.png" alt="recept" id="recept-icon">
+            <p class="home-recept">접 수</p>
+        </section>
+        <section class="received" onclick="moveReceive()">
+            <img src="../images/receive_icon.png" alt="receive" id="receive-icon">
+            <p class="home-receive">수 납</p>
+        </section>
+        <section class="print" onclick="movePrint()">
+            <img src="../images/print_icon.png" alt="print" id="print-icon">
+            <p class="home-print">제 증 명</p>
+        </section>
+        <section class="navigate" onclick="moveNavigate()">
+            <img src="../images/map-icon.png" alt="navigate" id="map-icon">
+            <p class="home-navigate">길 찾 기</p>
+        </section>
     </div>
-</div>
-
-<div class="container">
-    <div class="row row-cols-2 full-height-row">
-        <div class="col half-height" id="no1">
-            <div class="icon-card">
-                <img src="https://img.icons8.com/color/96/000000/nurse-female.png" alt="접수">
-                <p>접수</p>
-            </div>
-        </div>
-        <div class="col half-height" id="no2">
-            <div class="icon-card">
-                <img src="https://img.icons8.com/color/96/000000/card-in-use.png" alt="수납">
-                <p>수납</p>
-            </div>
-        </div>
-        <div class="col half-height" id="no3">
-            <div class="icon-card">
-                <img src="https://img.icons8.com/color/96/000000/print.png" alt="제증명">
-                <p>제증명</p>
-            </div>
-        </div>
-        <div class="col half-height" id="no4">
-            <div class="icon-card">
-                <img src="https://img.icons8.com/color/96/000000/marker.png" alt="길 찾기">
-                <p>길 찾기</p>
-            </div>
-        </div>
-    </div>
-    <div class="row mt-4">
-        <div class="col-12" id="no5">
-            <div class="chatbot">
-                <img src="https://img.icons8.com/color/96/000000/chatbot.png" alt="Chatbot">
-                <div>
-                    <p>저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<script>
-    //var area = document.getElementById('no1');
-    var area = document.getElementsByClassName('col half-height')
-    var area_chat = document.getElementsByClassName('chatbot')
-    area[0].addEventListener('click', function(event){
-        alert('접수')
-        window.location.href='/patients/check_new_old'
-    })
-    area[1].addEventListener('click', function(event){
-        alert('수납')
-    })
-    area[2].addEventListener('click', function(event){
-        alert('제증명')
-    })
-    area[3].addEventListener('click', function(event){
-        alert('길찾기')
-    })
-    area_chat[0].addEventListener('click', function(event){
-        alert('음성')
-    })
-</script>
-
+    <section class="chat" onclick="moveChat()">
+        <img src="../images/bot_image.png" alt="chatbot" id="chat-icon"><div class="home-chat">저를 눌러서<br>음성으로 무엇이든 물어보세요!</div>
+    </section>
 </body>
+<script>
+    function moveRecept(){
+        location.href = "/patients/recept";
+    }
+    function moveReceive(){
+        location.href = "/payments/payment_patient_search/";
+    }
+    function movePrint(){
+        location.href = "print_auth.html";
+    }
+    function moveNavigate(){
+        location.href = "nav-search.html";
+    }
+    function moveChat(){
+        location.href = "chat.html";
+    }
+    function moveAdmin(){
+        location.href = "http://127.0.0.1:8000/admin";
+    }
+</script>
 </html>

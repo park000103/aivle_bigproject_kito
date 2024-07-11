@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!-- 의사 목록 조회 페이지 -->
+<!-- {% load static %} -->
+<html lang="ko">
+<head>
+    <title> KIOSK </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class="doct-container">
+        <p id="doct-text">담당 의사 목록</p>
+        <div id="doct-list"><!-- 의사의 리스트가 들어감 -->
+        <!-- 라디오 버튼 + 리스트로 의사 목록에서 선택 -->
+            <form method="post" action="/reservations/create/" id='myForm'>
+                {% csrf_token %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>선택</th>
+                            <th>Department</th>
+                            <th>Name</th>
+                            <th>Info</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doctor in doctors %}
+                            <tr>
+                                <td><input type="radio" name="doctor_id" value="{{ doctor.id }}" onclick="toggleRadio(this)"></td>
+                                <td>{{ doctor.department.departments_name }}</td>
+                                <td>{{ doctor.doctor_name }}</td>
+                                <td>{{ doctor.information }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <input type='hidden' value='{{ patient }}' name='patient_id' id='patient'/>
+            </form>
+        </div>
+        <button type='button' id="select-btn" onclick='check_radio()'>에약하기</button>
+    </div>
+    <footer role="contentinfo" onclick="moveChat()">
+        <div class="footer_wrap">
+            <img src="../images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+        </div>
+    </footer>
+</body>
+<script>
+
+    function toggleRadio(radio) {
+        if (radio.wasChecked) {
+            radio.checked = false;
+        }
+        // Toggle the `wasChecked` state
+        radio.wasChecked = radio.checked;
+    }
+    function check_radio(){
+        radios = document.getElementsByName('doctor_id');
+        checked = false;
+
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                checked = true;
+                break;
+            }
+        }
+        if (checked) {
+            //document.getElementById('myForm').submit();
+                
+            const form = document.getElementById('myForm');
+            const formData = new FormData(form);
+            const jsonObject = {};
+
+            formData.forEach((value, key) => {
+                jsonObject[key] = value;
+            });
+            
+            url = 'https://56fa-180-66-16-143.ngrok-free.app/reservations/create/'; 
+
+            const csrftoken = getCookie('csrftoken');
+
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify(jsonObject)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                alert('예약완료');
+
+                window.location.href = '/';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Fetch error: ' + error.message);
+            });
+        } else {
+            alert('의사를 선택해주세요');
+        }
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function moveNav(){//환자가 의사를 선택하고 넘어갈 떄 알림 창 띄우기? -> 예약이 완료되었습니다.
+        location.href = "navigate.html";
+    }
+    function moveChat(){
+        location.href = "chat.html";
+    }
+</script>
+</html>

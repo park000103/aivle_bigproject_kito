@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+          height: 100%;
+        }
+
+        body {
+            background-color: #e6f0f7;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 250px;
+            margin-bottom: 250px;
+            height: 100%;
+        }
+        tr, tbody {
+            font-size: 50px;
+        }
+        input {
+            transform: scale(3);
+        }
+        button {
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class=container>
+        <h1>Doctor List</h1>
+        <form method="post" action="/reservations/add_reservation" id='myForm'>
+            {% csrf_token %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>선택</th>
+                        <th>Department</th>
+                        <th>Name</th>
+                        <th>Info</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doctor in doctors %}
+                        <tr>
+                            <td><input type="radio" name="selected_doctor" value="{{ doctor.id }}" onclick="toggleRadio(this)"></td>
+                            <td>{{ doctor.department.departments_name }}</td>
+                            <td>{{ doctor.doctor_name }}</td>
+                            <td>{{ doctor.information }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <input type='hidden' value='{{ patient }}' name='patient' id='patient'/>
+            <button type='button' onclick='check_radio()'>에약하기</button>
+        </form>
+    </div>
+    {% include 'footer.html' %}
+
+    <script>
+        function toggleRadio(radio) {
+            if (radio.wasChecked) {
+                radio.checked = false;
+            }
+            // Toggle the `wasChecked` state
+            radio.wasChecked = radio.checked;
+        }
+        function check_radio(){
+            radios = document.getElementsByName('selected_doctor');
+            checked = false;
+
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    checked = true;
+                    break;
+                }
+            }
+            if (checked) {
+                alert(document.getElementById('patient').value);
+                document.getElementById('myForm').submit();
+            } else {
+                alert('의사를 선택해주세요');
+            }
+        }
+    </script>
+
+</body>
+</html>

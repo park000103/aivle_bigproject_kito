@@ -5,6 +5,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import PatientSerializer
+
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from django.views.decorators.csrf import csrf_exempt
+from reservations.models import Reservation
+from reservations.serializers import ReservationSerializer
+
 from django.http import HttpResponse
 import json
 
@@ -31,24 +38,24 @@ def patients_list(request):
 
 #
 
-def check_new_old(request):
-    return render(request, 'patients/check_new_old.html')
+def new_nav(request):
+    return render(request, 'patients/new_nav.html')
 
-def search_patient(request):
-    return render(request, 'patients/search_patient.html')
+def recept(request):
+    return render(request, 'patients/recept.html')
 
-def new_patient(request):
-    return render(request, 'patients/new_patient.html')
+def recept_auth(request):
+    return render(request, 'patients/recept_auth.html')
 
 # 조회된 환자를 보여주기 위한 페이지 로드, json 데이터 전달
-def patient_list_page(request):
+def recept_auth2_page(request):
     json_data = request.GET.get('json_data', '{}')
     patients = json.loads(json_data)
-    print(patients)
-    return render(request, 'patients/patient_list.html', {'patients': patients})
+    print('recept_auth2_page : ', patients)
+    return render(request, 'patients/recept_auth2.html', {'patients': patients})
 
 # 이름, 생년월일로 환자 조회
-def patient_list(request):
+def recept_auth2(request):
     print(request)
     if request.method == 'POST':
     # POST 요청에 대한 처리
@@ -59,16 +66,34 @@ def patient_list(request):
     else:
     # GET 요청에 대한 처리 (옵션)
         print('GET!!!')
-        print(request.GET.get('patient_name', ''))
-        print(request.GET.get('patient_birth', ''))
+        # print(request.GET)
+        # print(request.GET[0])
+        # print(request.GET.get('name', ''))
+        # print(request.GET.get('birth', ''))
         pass
-    
+    print('여기까지 나옴0')
     # 조건에 맞는 환자 조회
-    people = Patient.objects.filter(patient_name=request.GET.get('patient_name', ''),
-                                    patient_birth=request.GET.get('patient_birth', ''))
+    print(request.GET)
+    js = request.GET.getlist('json_data')
+    
+    if js:
+        json_data_str = js[0]  # 리스트의 첫 번째 요소를 가져옴
+        json_data_list = json.loads(json_data_str)  # JSON 문자열을 파이썬 리스트로 변환
 
+        if json_data_list:
+            for item in json_data_list:
+                patient_name = item.get('patient_name')
+                patient_birth = item.get('patient_birth')
+            
+    #people = Patient.objects.filter(patient_name=request.GET.get('patient_name'),
+    #                                patient_birth=request.GET.get('patient_birth'))
+    people = Patient.objects.filter(patient_name=patient_name,
+                                    patient_birth=patient_birth)
+    
+    print('여기까지 나옴1')
     if people :
         print(people)
+        print('여기까지 나옴2')
         print(people[0].id)
         print(people[0].patient_name)
 
@@ -85,7 +110,7 @@ def patient_list(request):
         return response
         # return render(request, 'patients\patient_list.html', {'patients': json_data})
     else :
-        return render(request, 'new_patient.html')
+        return render(request, 'patients/new_nav.html')
 #
 class PatientSearchAPIView(APIView):
     def get(self, request, format=None):
@@ -110,3 +135,52 @@ class PatientListAPIView(APIView):
         patients = Patient.objects.all()
         serializer = PatientSerializer(patients, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+# 검색 폼을 렌더링하는 뷰
+def patient_search_view(request):
+    return render(request, 'patients/patient_search.html')
+
+@api_view(['GET'])
+def search_patients(request):
+    name = request.GET.get('name')
+    birth = request.GET.get('birth')
+    print(birth)
+    patients = Patient.objects.filter(patient_name__icontains=name, patient_birth=birth)
+    serializer = PatientSerializer(patients, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def patient_reservations(request, patient_id):
+    try:
+        patient = Patient.objects.get(pk=patient_id)
+    except Patient.DoesNotExist:
+        return Response({"error": "Patient not found"}, status=404)
+
+    reservations = Reservation.objects.filter(patient_id=patient_id).select_related('doctor_id')
+    serialized_reservations = []
+    for reservation in reservations:
+        serialized_reservation = {
+            "reservation_date": reservation.reservation_date,
+            "patient_name": patient.patient_name,
+            "doctor_name": reservation.doctor_id.doctor_name,
+            "reservation_status": reservation.reservation_status,
+            "id": reservation.id
+        }
+        serialized_reservations.append(serialized_reservation)
+    return Response(serialized_reservations)
+
+@csrf_exempt
+@api_view(['POST'])
+def change_reservation_status(request, reservation_id):
+    try:
+        reservation = Reservation.objects.get(pk=reservation_id)
+    except Reservation.DoesNotExist:
+        return Response({"error": "Reservation not found"}, status=404)
+
+    status = request.data.get('status')
+    if status is not None:
+        reservation.reservation_status = status
+        reservation.save()
+        return Response({"success": "Reservation status updated successfully"})
+    else:
+        return Response({"error": "Invalid status value"}, status=400)

@@ -8,10 +8,14 @@ urlpatterns = [
     path('list2/', PatientListAPIView.as_view(), name='patient-list2'), # 전체환자 조회
     path('list2/search/', PatientSearchAPIView.as_view(), name='patient-search'), #이름과 생년월일로 조회 GET /patients/list2/search/?name=김환자&patient_bday=800101
 
-    path('check_new_old', views.check_new_old),
-    path('search_patient', views.search_patient),
-    path('new_patient', views.new_patient),
-    path('patient_list', views.patient_list),
-    path('patient_list_page', views.patient_list_page),
+    path('search/', patient_search_view, name='patient-search-view'),
+    path('search/results/', search_patients, name='search-patients'),
+    path('<int:patient_id>/reservations/', patient_reservations, name='patient-reservations'),
+    path('reservations/<int:reservation_id>/change_status/', change_reservation_status, name='change-reservation-status'),
 
+    path('new_nav', views.new_nav),
+    path('recept', views.recept),
+    path('recept_auth', views.recept_auth),
+    path('recept_auth2', views.recept_auth2),
+    path('recept_auth2_page', views.recept_auth2_page),
 ]

@@ -48,7 +48,7 @@
 
         <div class="button-container">
             {% for depart in departments %}
-                <button class="search-button" depart="{{ depart.departments_id }}">{{ depart.departments_name }}</button>
+                <button class="search-button" data-depart="{{ depart.id }}">{{ depart.departments_name }}</button>
             {% if forloop.counter|divisibleby:4 and not forloop.last %}
         </div>
         <div class="button-container">
@@ -87,11 +87,33 @@
             var buttons = document.querySelectorAll('.search-button');
             buttons.forEach(function(button) {
                 button.addEventListener('click', function() {
-                    var depart = this.getAttribute('depart');
-                    var patient_id = document.getElementById('patient_id').value;
+                    var depart = this.getAttribute('data-depart');
+                    var patientid = document.getElementById('patient_id').value;
                     alert(depart);
-                    alert(patient_id);
-                    window.location.href = '/doctors/search_doctors?doctor_depa=' + depart + '&patient_id=' + patient_id;
+                    alert(patientid);
+                    department_id = Number(depart);
+                    patient_id = Number(patientid);
+                    //window.location.href = '/doctors/search_doctors?doctor_depa=' + depart + '&patient_id=' + patient_id;
+                    //window.location.href = '/doctors/list/${department_id}' + '?patient_id=' + patient_id;
+                    
+                    //url = 'https://56fa-180-66-16-143.ngrok-free.app/doctors/list/${department_id}/';
+                    
+                    url = 'https://56fa-180-66-16-143.ngrok-free.app/doctors/list/1/';
+                    
+                    fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+    
+                        // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
+                        var queryParams = new URLSearchParams();
+                        queryParams.append('json_data', JSON.stringify(data));
+                        queryParams.append('patient_id', patient_id);
+            
+                        // window.location.href를 사용하여 새로운 페이지로 이동
+                        window.location.href = '/doctors/doctor_list_page?' + queryParams.toString();
+                    })
+                    .catch(error => console.error('Error:', error));
                 });
             });
         });

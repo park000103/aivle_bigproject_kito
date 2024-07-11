@@ -53,9 +53,9 @@
 <body>
     {% include 'header.html' %}
     <div class='container'>
-        <form name="patient" method="get" id="myForm" action="/patients/patient_list">
+        <form name="patient" method="get" id="myForm" action="/patients/search/results/">
             <p> 이 름 </p>
-            <input class="input" id="input1" name='patient_name' value='환자1' required/>
+            <input class="input" id="input1" name='name' value='환자1' required/>
             <br>
             <p> 생년월일 </p>
             <div class="input-container">
@@ -63,7 +63,7 @@
                 <input class="input" id="input3" type="number" name='month' min='1' max = '12' value='9' required/>
                 <input class="input" id="input4" type="number" name='day' min='1' max = '31' value='5' required/>
             </div>
-            <input type="hidden" id="patient_birth" name='patient_birth'/>
+            <input type="hidden" id="patient_birth" name='birth'/>
             <button type="button" id="send_button" onclick='send_patient()'>확인</button>         
         </form>
         <div id="keyboard" class="simple-keyboard"></div>
@@ -203,7 +203,6 @@
             (month >= minMonth && month <= maxMonth) &&
             (day >= minDay && day <= maxDay)) {
                 document.getElementById('patient_birth').value = dateFormat;
-                alert(`Hidden field value: ${patient_birth.value}`);
 
                 const form = document.getElementById('myForm');
                 const formData = new FormData(form);
@@ -214,16 +213,14 @@
                 });
 
                 const jsonString = JSON.stringify(jsonObject);
-                alert(jsonObject);
-                alert(jsonString);
 
-                url = 'https://f855-14-36-58-174.ngrok-free.app/patients/patient_list' + toQueryString(jsonObject);
+                url = 'https://56fa-180-66-16-143.ngrok-free.app/patients/search/results/' + toQueryString(jsonObject);
                 alert(toQueryString(jsonObject))
                 fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    alert(data);
+
                     // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
                     var queryParams = new URLSearchParams();
                     queryParams.append('json_data', JSON.stringify(data));
