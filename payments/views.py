@@ -40,6 +40,7 @@ class PaymentListAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 def payment_patient_search(request):
+    print(request)
     return render(request, 'payments/payment_patient_search.html')
 
 def payment_patient_list(request):
