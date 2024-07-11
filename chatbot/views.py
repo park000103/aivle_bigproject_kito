@@ -4,7 +4,7 @@ import requests
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-VOICEFLOW_API = 'VF.DM.667a7b6b6713dc7c12c4b6b4.TcI959ncBBs9W6gW'  # voiceflow api키 넣기
+VOICEFLOW_API = ''  # voiceflow api키 넣기
 
 def index(request):
     user_id = 'unique_user_id'  # 사용자 고유 ID 설정

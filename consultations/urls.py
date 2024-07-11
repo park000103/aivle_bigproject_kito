@@ -1,6 +1,14 @@
 from django.urls import path
 from . import views
+from .views import *
 
 urlpatterns = [
-
+    path('bfpayment/', ConsultationPaymentListView.as_view(), name='consultation-payment-list'),
+    path('bfpayment/<int:patient_id>/', ConsultationPaymentListView.as_view(), name='consultation-payment-list'),#수납전 당일 진료 리스트
+    path('afpayment/', ConsultationPayListView.as_view(), name='detailconsultation-list'),
+    path('afpayment/<int:patient_id>/', ConsultationPayListView.as_view(), name='detailconsultation-list-filter'),
+    path('search/', search_patient_view, name='search-patient'),
+    path('search/results/', patient_search_results, name='patient-search-results'),
+    path('search/consultations/', patient_consultations, name='patient-consultations'),
+    path('<int:consultation_id>/detail/', consultation_detail_view, name='consultation-detail'),
 ]
