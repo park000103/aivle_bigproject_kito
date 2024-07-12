@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html>
 <head>
     <title>Chat with STT</title>
@@ -97,6 +97,165 @@
                     }
                 }
 
+                displayNextMessage();
+            }
+
+            let mediaRecorder;
+            let audioChunks = [];
+
+            document.getElementById('recordButton').onclick = async () => {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                mediaRecorder.start();
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    audioChunks = [];
+                    const reader = new FileReader();
+                    reader.readAsDataURL(audioBlob);
+                    reader.onloadend = async () => {
+                        const base64data = reader.result;
+                        const response = await fetch('/chatbot/transcribe/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: `audio_data=${encodeURIComponent(base64data)}`
+                        });
+
+                        const result = await response.json();
+                        const transcript = result.transcript || 'Error transcribing audio';
+                        document.getElementById('transcript').value = transcript;
+                        $('#chat-message-input').val(transcript);
+                    };
+                };
+
+                document.getElementById('recordButton').disabled = true;
+                document.getElementById('stopButton').disabled = false;
+            };
+
+            document.getElementById('stopButton').onclick = () => {
+                mediaRecorder.stop();
+                document.getElementById('recordButton').disabled = false;
+                document.getElementById('stopButton').disabled = true;
+            };
+        });
+    </script>
+</body>
+</html> {% endcomment %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat with STT</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .typing-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: #000;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat</h1>
+    <div id="chat-log2">
+        <div>{{ initial_message|safe }}</div>
+    </div>
+    <div id="chat-log">
+        <div></div>
+    </div>
+    <div style="display: flex; align-items: center;">
+        <button id="recordButton">Record</button>
+        <button id="stopButton" disabled>Stop</button>
+        <input type="text" id="chat-message-input" autocomplete="off" placeholder="Type your message here..." style="margin-left: 10px;">
+        <button id="chat-message-submit">Send</button>
+    </div>
+    <textarea id="transcript" rows="10" cols="50" style="display: none;"></textarea>
+
+    <script>
+        $(document).ready(function() {
+            $('#chat-message-submit').click(function() {
+                sendMessage();
+            });
+
+            $('#chat-message-input').keypress(function(e) {
+                if (e.which == 13) {
+                    sendMessage();
+                }
+            });
+
+            function sendMessage() {
+                var message = $('#chat-message-input').val();
+                $.ajax({
+                    url: '/chatbot/send_message/',
+                    method: 'POST',
+                    data: {
+                        'message': message,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        $('#chat-log').append('<div><strong>You:</strong> ' + $('<div>').text(message).html() + '</div>');
+                        if (data.messages) {
+                            displayMessagesWithDelay(data.messages);
+                        }
+                        $('#chat-message-input').val('');
+                    },
+                    error: function(error) {
+                        console.error("Error:", error);
+                    }
+                });
+            }
+
+            function displayMessagesWithDelay(messages) {
+                var index = 0;
+    
+                function displayNextMessage() {
+                    if (index < messages.length) {
+                        var messageData = messages[index];
+                        var delay = messageData.delay || 0;
+    
+                        if (messageData.type === 'text') {
+                            var message = messageData.content;
+                            if (message === "Sorry, I didn’t get that. Please try again.") {
+                                message = "죄송합니다. 다시 말씀해주세요.";
+                            }
+    
+                            if (delay > 0) {
+                                var typingIndicator = $('<div><strong>Bot:</strong> <span class="typing-indicator"></span></div>');
+                                $('#chat-log').append(typingIndicator);
+                                setTimeout(function() {
+                                    typingIndicator.html('<strong>Bot:</strong> ' + message);
+                                    index++;
+                                    displayNextMessage();
+                                }, delay);
+                            } else {
+                                $('#chat-log').append('<div><strong>Bot:</strong> ' + message + '</div>');
+                                index++;
+                                displayNextMessage();
+                            }
+                        } else if (messageData.type === 'image') {
+                            var imageUrl = messageData.content;
+                            $('#chat-log').append('<div><strong>Bot:</strong> <img src="' + imageUrl + '" alt="Image"></div>');
+                            index++;
+                            displayNextMessage();
+                        }
+                    }
+                }
+    
                 displayNextMessage();
             }
 

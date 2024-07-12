@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ board.title }}</title>
+</head>
+<body>
+    <h1>제목:{{ board.title }}</h1>
+    <p>내용: {{ board.content }}</p>
+    <p>작성자: {{ board.author.name }}</p>
+    <a href="{% url 'board:board_list' %}">목록으로 돌아가기</a>
+</body>
+</html>

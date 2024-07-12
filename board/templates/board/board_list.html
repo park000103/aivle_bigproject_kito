@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>게시판</title>
+    <script>
+        function confirmDelete(url) {
+            if (confirm("정말 삭제하시겠습니까?")) {
+                window.location.href = url;
+            }
+        }
+ 
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if messages %}
+                {% for message in messages %}
+                    alert("{{ message }}");
+                {% endfor %}
+            {% endif %}
+        });
+    </script>
+</head>
+<body>
+    <h1>게시물 목록</h1>
+    <a href="{% url 'board:board_create' %}">새 게시물 작성</a>
+    <ul>
+        {% for board in boards %}
+            <li>
+                <a href="{% url 'board:board_detail' board.pk %}">{{ board.title }}</a>
+                <span>작성자: {{ board.author.name }}</span>
+                <a href="{% url 'board:board_edit' board.pk %}">수정</a>
+                <a href="javascript:void(0);" onclick="confirmDelete('{% url 'board:board_delete' board.pk %}');">삭제</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

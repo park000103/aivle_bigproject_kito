@@ -5,7 +5,7 @@ import requests
 from django.views.decorators.csrf import csrf_exempt
 from google.cloud import speech
 
-VOICEFLOW_API = ''  # Voiceflow API 키 넣기
+VOICEFLOW_API = 'VF.DM.667b94ef7941e814dcbc6b82.K0b6vWH7OmFe14Ot'  # Voiceflow API 키 넣기
 
 def index(request):
     user_id = 'unique_user_id'  # 사용자 고유 ID 설정
@@ -48,13 +48,9 @@ def send_message(request):
     if request.method == "POST":
         message = request.POST.get('message')
         user_id = 'unique_user_id'
-        print(message)
         url = f"https://general-runtime.voiceflow.com/state/user/{user_id}/interact?logs=off"
         payload = {
-            "action": {
-                "type": "text",
-                "payload": message
-            },
+            "action": {"type": "text", "payload": message},
             "config": {
                 "tts": False,
                 "stripSSML": True,
@@ -69,29 +65,24 @@ def send_message(request):
             "Authorization": VOICEFLOW_API
         }
         response = requests.post(url, json=payload, headers=headers)
-        print(response.text)
         if response.status_code == 200:
             try:
                 data = response.json()
                 messages = []
-                if isinstance(data, list):
-                    for item in data:
-                        if 'message' in item.get('payload', {}):
-                            message = item['payload']['message']
-                            delay = item.get('payload', {}).get('delay', 0)
-                            messages.append({'message': message, 'delay': delay})
-                elif isinstance(data, dict) and 'message' in data.get('payload', {}):
-                    message = data['payload']['message']
-                    delay = data.get('payload', {}).get('delay', 0)
-                    messages.append({'message': message, 'delay': delay})
+                for item in data:
+                    if item['type'] == 'text' and 'message' in item['payload']:
+                        message = item['payload']['message']
+                        delay = item['payload'].get('delay', 0)
+                        messages.append({'type': 'text', 'content': message, 'delay': delay})
+                    elif item['type'] == 'visual' and 'image' in item['payload']:
+                        image = item['payload']['image']
+                        messages.append({'type': 'image', 'content': image, 'delay': 0})
                 return JsonResponse({'messages': messages})
             except ValueError as e:
                 return JsonResponse({'error': 'Invalid JSON response from API'}, status=500)
         else:
             return JsonResponse({'error': 'Failed to interact with Voiceflow API'}, status=response.status_code)
-    else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
-
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 @csrf_exempt
 def transcribe(request):
     if request.method == 'POST':

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'prescriptions',
     'reservations',
     'chatbot',
+    'board',
     
     'rest_framework',
 ]
