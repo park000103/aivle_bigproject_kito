@@ -5,7 +5,7 @@ import requests
 from django.views.decorators.csrf import csrf_exempt
 from google.cloud import speech
 
-VOICEFLOW_API = 'VF.DM.667b94ef7941e814dcbc6b82.K0b6vWH7OmFe14Ot'  # Voiceflow API 키 넣기
+VOICEFLOW_API = ''  # Voiceflow API 키 넣기
 
 def index(request):
     user_id = 'unique_user_id'  # 사용자 고유 ID 설정
