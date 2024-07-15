@@ -40,6 +40,19 @@ class ConsultationPayListView(APIView):
         # Payment 테이블에 있는 consultation_id로 필터링하여 Consultation 객체들을 가져옵니다.
         consultations = Consultation.objects.filter(id__in=Payment.objects.values('consultation_id').distinct())
         
+        # 쿼리 매개변수로 시작 날짜와 종료 날짜를 가져옵니다.
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+        
+        # 날짜가 유효한 경우 기간 필터링을 적용합니다.
+        if start_date and end_date:
+            try:
+                start_date = datetime.strptime(start_date, '%Y-%m-%d')
+                end_date = datetime.strptime(end_date, '%Y-%m-%d')
+                consultations = consultations.filter(date__range=(start_date, end_date))
+            except ValueError:
+                return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+        
         if patient_id:
             consultations = consultations.filter(patient_id=patient_id)
             
