@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Departments
+from .models import *
 from rest_framework import status
-from .serializers import DepartmentsSerializer
+from .serializers import *
 
 @api_view(['GET'])
 def list_departments(request):
@@ -23,3 +23,27 @@ def search_name(request):
         return Response(serializer.data)
     except Departments.DoesNotExist:
         return Response({'error': 'Department not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['GET'])
+def department_locations_list(request):
+    department_locations = DepartmentLocations.objects.all()
+    serializer = DepartmentLocationsSerializer(department_locations, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def department_locations_detail(request, department_id):
+    department_locations = DepartmentLocations.objects.filter(departments_id=department_id)
+    if not department_locations.exists():
+        return Response({'error': 'Department not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = DepartmentLocationsSerializer(department_locations, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def floor_map_detail(request, floor):
+    try:
+        floor_map = FloorMap.objects.get(floor=floor)
+        serializer = FloorMapSerializer(floor_map)
+        return Response(serializer.data)
+    except FloorMap.DoesNotExist:
+        return Response({'error': 'Floor not found'}, status=status.HTTP_404_NOT_FOUND)
