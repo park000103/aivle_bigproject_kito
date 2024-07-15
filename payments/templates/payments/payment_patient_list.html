@@ -5,7 +5,7 @@
 <head>
     <title> KIOSK </title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="/static/style.css">
     <style>
         tr, tbody {
             font-size: 50px;
@@ -20,7 +20,7 @@
 </head>
 <body>
     {% include 'header.html' %}
-    <form method="get" action="/patients/<int:patient_id>/reservations/" id='myForm'>
+    <form method="get" action="/consultations/bfpayment/<int:patient_id>/" id='myForm'>
         <div class="patient-container">
             <p id="patient-text">환자 목록</p>
             <div id="patient-list">
@@ -36,7 +36,7 @@
                     <tbody>
                         {% for patient in patients %}
                             <tr>
-                                <td><input type="radio" name="selected_patient" value="{{ patient.id }}" onclick="toggleRadio(this)"></td>
+                                <td><input type="radio" name="patient" value="{{ patient.id }}" onclick="toggleRadio(this)"></td>
                                 <td>{{ patient.id }}</td>
                                 <td>{{ patient.patient_name }}</td>
                                 <td>{{ patient.patient_birth }}</td>
@@ -50,7 +50,7 @@
     </form>
     <footer role="contentinfo" onclick="moveChat()">
         <div class="footer_wrap">
-            <img src="../images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+            <img src="/images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
         </div>
     </footer>
 </body>
@@ -69,7 +69,7 @@
             .join('&');
     }
     function check_radio(){
-        radios = document.getElementsByName('selected_patient');
+        radios = document.getElementsByName('patient');
         let checked = false;
         let selected_id = null;
 
@@ -95,8 +95,8 @@
             const jsonString = JSON.stringify(jsonObject);  
 
             int_id = Number(selected_id);
-            url = `https://5462-180-66-16-143.ngrok-free.app/patients/${int_id}/reservations/`;
-
+            url = `https://14ba-14-36-58-174.ngrok-free.app/consultations/bfpayment/${int_id}/`;
+            
             fetch(url)
             .then(response => response.json())
             .then(data => {
@@ -106,9 +106,9 @@
                 var queryParams = new URLSearchParams();
                 queryParams.append('json_data', JSON.stringify(data));
                 queryParams.append('patient_id', selected_id);
-    
+
                 // window.location.href를 사용하여 새로운 페이지로 이동
-                window.location.href = '/reservations/reserve?' + queryParams.toString();
+                window.location.href = '/payments/consultations_payment_list?' + queryParams.toString();
             })
             .catch(error => console.error('Error:', error));
 

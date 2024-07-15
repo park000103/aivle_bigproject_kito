@@ -5,7 +5,7 @@
 <head>
     <title> KIOSK </title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="/static/style.css">
     <style>
         tr, tbody {
             font-size: 50px;
@@ -36,7 +36,7 @@
                     <tbody>
                         {% for patient in patients %}
                             <tr>
-                                <td><input type="radio" name="selected_patient" value="{{ patient.id }}" onclick="toggleRadio(this)"></td>
+                                <td><input type="radio" name="patient" value="{{ patient.id }}" onclick="toggleRadio(this)"></td>
                                 <td>{{ patient.id }}</td>
                                 <td>{{ patient.patient_name }}</td>
                                 <td>{{ patient.patient_birth }}</td>
@@ -45,12 +45,12 @@
                     </tbody>
                 </table>
             </div><!-- 환자의 리스트가 들어감 -->
-            <button type='button' id="select-btn" onclick='check_radio()'>예약 확인</button>
+            <button type='button' id="select-btn" onclick='check_radio()'>제증명 확인</button>
         </div>
     </form>
     <footer role="contentinfo" onclick="moveChat()">
         <div class="footer_wrap">
-            <img src="../images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+            <img src="/images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
         </div>
     </footer>
 </body>
@@ -69,7 +69,7 @@
             .join('&');
     }
     function check_radio(){
-        radios = document.getElementsByName('selected_patient');
+        radios = document.getElementsByName('patient');
         let checked = false;
         let selected_id = null;
 
@@ -94,24 +94,26 @@
 
             const jsonString = JSON.stringify(jsonObject);  
 
-            int_id = Number(selected_id);
-            url = `https://14ba-14-36-58-174.ngrok-free.app/patients/${int_id}/reservations/`;
-
+            //url = `https://14ba-14-36-58-174.ngrok-free.app/consultations/search/consultations/page` + toQueryString(jsonObject);
+            
+            window.location.href = '/consultations/search/consultations/page' + toQueryString(jsonObject);
+            /*
             fetch(url)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-
+                alert(JSON.stringify(data));
+                alert(selected_id);
                 // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
                 var queryParams = new URLSearchParams();
                 queryParams.append('json_data', JSON.stringify(data));
                 queryParams.append('patient_id', selected_id);
     
                 // window.location.href를 사용하여 새로운 페이지로 이동
-                window.location.href = '/reservations/reserve?' + queryParams.toString();
+                window.location.href = '/consultations/search/consultations/page?' + queryParams.toString();
             })
             .catch(error => console.error('Error:', error));
-
+            */
         } else {
             alert('환자를 선택해주세요');
         }

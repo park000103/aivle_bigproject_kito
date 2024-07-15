@@ -9,4 +9,6 @@ urlpatterns = [
     
     path('payment_patient_list/', views.payment_patient_list),
     path('payment_patient_search/', views.payment_patient_search),
+    path('consultations_payment_list', views.consultations_payment_list),
+    path('consultations_payment', views.consultations_payment),
 ]

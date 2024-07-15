@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/static/style.css" type="text/css">
     <script src="/static/hangul.js" type="text/javascript"></script>
     <script src="/static/keyboard.js" type="text/javascript"></script>
-    <script src="/static/auth.js"></script>
+    <script src="/static/auth.js" type="text/javascript"></script>
 </head>
 <body>
     {% include 'header.html' %}
@@ -73,7 +73,7 @@
         });
 
         const jsonString = JSON.stringify(jsonObject);
-        url = 'https://5462-180-66-16-143.ngrok-free.app/patients/search/results/' + toQueryString(jsonObject);
+        url = 'https://14ba-14-36-58-174.ngrok-free.app/patients/search/results/' + toQueryString(jsonObject);
 
         fetch(url)
         .then(response => response.json())
@@ -86,9 +86,7 @@
 
             if(data.length > 0){
                  // window.location.href를 사용하여 새로운 페이지로 이동
-                alert(queryParams);
-                alert('payment_patient_list?' + queryParams.toString());
-                window.location.href = 'payment_patient_list?' + queryParams.toString();
+                window.location.href = '/payments/payment_patient_list?' + queryParams.toString();
             }
             else {
                 window.location.href = '/patients/new_nav';

@@ -25,12 +25,12 @@ SECRET_KEY = 'django-insecure-%k%1a1i$2pr^om71m--qzl)#a2-4-)%gzyx6=l6keh_t1!s^@1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['5462-180-66-16-143.ngrok-free.app',
+ALLOWED_HOSTS = ['14ba-14-36-58-174.ngrok-free.app',
                  '127.0.0.1',
                  ]
 AUTH_USER_MODEL = 'accounts.User'  # yourapp을 실제 앱 이름으로 대체하세요
 
-CSRF_TRUSTED_ORIGINS = ['https://5462-180-66-16-143.ngrok-free.app']  # post 전달할 때 넣어줘야 문제 없다!!!!
+CSRF_TRUSTED_ORIGINS = ['https://14ba-14-36-58-174.ngrok-free.app']  # post 전달할 때 넣어줘야 문제 없다!!!!
 
 MEDIA_URL = '/images/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'images')

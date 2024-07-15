@@ -156,7 +156,7 @@ def patient_reservations(request, patient_id):
     except Patient.DoesNotExist:
         return Response({"error": "Patient not found"}, status=404)
 
-    reservations = Reservation.objects.filter(patient_id=patient_id).select_related('doctor_id')
+    reservations = Reservation.objects.filter(patient_id=patient_id, reservation_status__in=[0, 1]).select_related('doctor_id')
     serialized_reservations = []
     for reservation in reservations:
         serialized_reservation = {

@@ -1,7 +1,10 @@
+import json
+from patients.serializers import PatientSerializer
+from patients.models import Patient
 from django.shortcuts import render
 
 # Create your views here.
-from patients.serializers import PatientSerializer
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,11 +14,12 @@ from payments.models import Payment
 from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from patients.models import Patient
+
 from .models import Consultation
 from .serializers import *
-from datetime import datetime
+from datetime import datetime, time
 from rest_framework.renderers import JSONRenderer
+
 
 class ConsultationPaymentListView(APIView):
     def get(self, request, patient_id=None):
@@ -43,7 +47,23 @@ class ConsultationPayListView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 def search_patient_view(request):
-    return render(request, 'consultations/search_patient.html')
+    return render(request, 'consultations/consul_auth.html')
+
+def patient_consultations_page(request):
+    patient = request.GET.get('patient', '-1')
+    return render(request, 'consultations/consul_search.html', {'patient': patient})
+
+def patient_search_results_page(request):
+    json_data = request.GET.get('json_data', '{}')
+    patients = json.loads(json_data)
+    print('patient_search_results_page : ', patients)
+    return render(request, 'consultations/consul_auth2.html', {'patients': patients})
+
+def consultations_search(request):
+    json_data = request.GET.get('json_data', '{}')
+    patients = json.loads(json_data)
+    print('consultations_search : ', patients)
+    return render(request, 'consultations/consul_auth2.html', {'patients': patients})
 
 @api_view(['GET'])
 def patient_search_results(request):
@@ -57,8 +77,13 @@ def patient_search_results(request):
 @api_view(['GET'])
 def patient_consultations(request):
     patient_id = request.query_params.get('patient_id')
-    start_date = request.query_params.get('start_date')
-    end_date = request.query_params.get('end_date')
+    start = request.query_params.get('start_date')
+    start_date = datetime.strptime(start, "%Y-%m-%d").date()
+    end = request.query_params.get('end_date')
+    end_date = datetime.strptime(end, "%Y-%m-%d").date()
+
+    start_datetime = timezone.make_aware(datetime.combine(start_date, time.min), timezone.get_current_timezone())
+    end_datetime = timezone.make_aware(datetime.combine(end_date, time.max), timezone.get_current_timezone())
 
     try:
         patient = Patient.objects.get(id=patient_id)
@@ -67,7 +92,7 @@ def patient_consultations(request):
 
     consultations = Consultation.objects.filter(
         patient_id=patient,
-        consultation_date__range=[start_date, end_date]
+        consultation_date__range=[start_datetime, end_datetime]
     )
     if consultations.exists():
         serializer = ConsultationSerializer(consultations, many=True)

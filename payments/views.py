@@ -14,6 +14,9 @@ import json
 class PaymentCreateAPIView(APIView):
     def post(self, request):
         serializer = PaymentSerializer(data=request.data)
+        print('1 : ', request)
+        print('2 : ', request.data)
+        print('3 : ', serializer)
         if serializer.is_valid():
             serializer.save()  # 자동으로 현재 시간 저장됨
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -43,8 +46,19 @@ def payment_patient_search(request):
     print(request)
     return render(request, 'payments/payment_patient_search.html')
 
+def consultations_payment(request):
+    print('consultations_payment : ', request)
+    consultation_id = request.GET.get('consultation_id', '0')
+    return render(request, 'payments/consultations_payment.html', {'consultation_id': 'consultation_id'})
+
 def payment_patient_list(request):
     json_data = request.GET.get('json_data', '{}')
     patients = json.loads(json_data)
     print('payment_patient_list : ', patients)
     return render(request, 'payments/payment_patient_list.html', {'patients': patients}) 
+
+def consultations_payment_list(request):
+    json_data = request.GET.get('json_data', '{}')
+    payments = json.loads(json_data)
+    print('consultations_payment_list : ', payments)
+    return render(request, 'payments/consultations_payment_list.html', {'payments': payments}) 
