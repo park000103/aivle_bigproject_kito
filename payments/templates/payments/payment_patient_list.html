@@ -40,6 +40,8 @@
                                 <td>{{ patient.id }}</td>
                                 <td>{{ patient.patient_name }}</td>
                                 <td>{{ patient.patient_birth }}</td>
+                                <input type='hidden' name='start_date' id='start_date'/>
+                                <input type='hidden' name='end_date' id='end_date'/>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -95,7 +97,7 @@
             const jsonString = JSON.stringify(jsonObject);  
 
             int_id = Number(selected_id);
-            url = `https://14ba-14-36-58-174.ngrok-free.app/consultations/bfpayment/${int_id}/`;
+            url = `https://111c-14-36-58-174.ngrok-free.app/consultations/bfpayment/${int_id}/`;
             
             fetch(url)
             .then(response => response.json())

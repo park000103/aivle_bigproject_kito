@@ -73,7 +73,7 @@
         });
 
         const jsonString = JSON.stringify(jsonObject);
-        url = 'https://14ba-14-36-58-174.ngrok-free.app/patients/search/results/' + toQueryString(jsonObject);
+        url = 'https://111c-14-36-58-174.ngrok-free.app/patients/search/results/' + toQueryString(jsonObject);
 
         fetch(url)
         .then(response => response.json())
@@ -83,7 +83,7 @@
             // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
             var queryParams = new URLSearchParams();
             queryParams.append('json_data', JSON.stringify(data));
-            alert('환자 : ', JSON.stringify(data))
+
             if(data.length > 0){
                  // window.location.href를 사용하여 새로운 페이지로 이동
                 window.location.href = '/consultations/search/results/page?' + queryParams.toString();

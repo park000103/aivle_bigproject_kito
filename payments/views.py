@@ -49,7 +49,7 @@ def payment_patient_search(request):
 def consultations_payment(request):
     print('consultations_payment : ', request)
     consultation_id = request.GET.get('consultation_id', '0')
-    return render(request, 'payments/consultations_payment.html', {'consultation_id': 'consultation_id'})
+    return render(request, 'payments/consultations_payment.html', {'consultation_id': consultation_id})
 
 def payment_patient_list(request):
     json_data = request.GET.get('json_data', '{}')

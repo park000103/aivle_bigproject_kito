@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from .models import *
 from rest_framework import status
 from .serializers import *
+import json
 
 @api_view(['GET'])
 def list_departments(request):
@@ -47,3 +48,11 @@ def floor_map_detail(request, floor):
         return Response(serializer.data)
     except FloorMap.DoesNotExist:
         return Response({'error': 'Floor not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+def floor_map(request):
+    print(request)
+    json_data = request.GET.get('json_data', '{}')
+    floor_map_image = json.loads(json_data)
+    print(json_data)
+    print(floor_map_image)
+    return render(request, 'departments/floor_map.html', {'floor_map_image':floor_map_image})

@@ -72,7 +72,26 @@
         location.href = "/consultations/search";
     }
     function moveNavigate(){
-        location.href = "nav-search.html";
+
+        const floor = 1
+
+        url = `https://111c-14-36-58-174.ngrok-free.app/departments/floor-map/${floor}/`;
+
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+
+            // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
+            var queryParams = new URLSearchParams();
+            queryParams.append('json_data', JSON.stringify(data));
+            console.log(queryParams);
+            window.location.href = '/departments/floor_map/?' + queryParams.toString();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Fetch error: ' + error.message);
+        });
     }
     function moveChat(){
         location.href = "/chatbot/";

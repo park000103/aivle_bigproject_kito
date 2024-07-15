@@ -60,7 +60,6 @@
             <div class="btns-container">
                 <button type="button" id="payment-btn1" onclick="check_radio(event, '카드')">카 드 결 제</button>
                 <button type="button" id="payment-btn2" onclick="check_radio(event, '네이버페이')">간 편 결 제</button>
-                <button type='button' id="select-btn" onclick='check_radio()'>수납</button>
             </div>
             {% endif %}   
         </div>
@@ -134,7 +133,7 @@
 
             int_id = Number(selected_id);
 
-            url = `https://14ba-14-36-58-174.ngrok-free.app/payments/create/`;
+            url = `https://111c-14-36-58-174.ngrok-free.app/payments/create/`;
 
             const csrftoken = getCookie('csrftoken');
 

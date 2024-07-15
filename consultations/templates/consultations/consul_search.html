@@ -10,8 +10,9 @@
 <body>
     {% include 'header.html' %}
     <div class="patient-container">
-        <form method="get" action="search/consultations/" id='myForm'>
-            <input type='hidden' name='patient_id' id='selected_id' value='{{ patient }}'/>
+        <input type='hidden' name='patient_id' id='patient_id' value='{{ patient }}'/>
+        <form method="get" action="afpayment/<int:patient_id>/" id='myForm'>
+            <input type='hidden' name='patient_id' id='patient_id' value='{{ patient }}'/>
             <input type='date' name='start_date' id='start_date' onchange="setMinEndDate()"/>
             <input type='date' name='end_date' id='end_date' onchange="setMaxStartDate()"/>
         </form>
@@ -54,26 +55,27 @@
             const form = document.getElementById('myForm');
             const formData = new FormData(form);
             const jsonObject = {};
-            selected_id = document.getElementById('selected_id');
+            patient_id = document.getElementById('patient_id');
 
             formData.forEach((value, key) => {
                 jsonObject[key] = value;
             });
 
             const jsonString = JSON.stringify(jsonObject);  
+            
+            int_id = Number(patient_id.value);
 
-            url = `https://14ba-14-36-58-174.ngrok-free.app/consultations/search/consultations` + toQueryString(jsonObject);
+            url = `https://111c-14-36-58-174.ngrok-free.app/consultations/afpayment/${int_id}/` + toQueryString(jsonObject);
 
             fetch(url)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                alert(JSON.stringify(data));
-                alert(selected_id.value);
+
                 // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
                 var queryParams = new URLSearchParams();
                 queryParams.append('json_data', JSON.stringify(data));
-                queryParams.append('patient_id', selected_id);
+                queryParams.append('patient_id', patient_id);
     
                 // window.location.href를 사용하여 새로운 페이지로 이동
                 //window.location.href = '/consultations/search/consultations/page?' + queryParams.toString();
