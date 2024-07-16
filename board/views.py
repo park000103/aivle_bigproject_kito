@@ -10,7 +10,7 @@ from django.contrib import messages
 def board_list(request):
     boards = Board.objects.all()
     # 페이지네이션 설정
-    paginator = Paginator(boards, 10)  # 한 페이지당 10개씩 보여주기
+    paginator = Paginator(boards, 5)  # 한 페이지당 10개씩 보여주기
     page = request.GET.get('page')
 
     try:

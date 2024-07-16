@@ -1,50 +1,251 @@
 {% extends "admin/base.html" %}
-
+ 
 {% block title %}
-    공지내용
+    게시글작성
 {% endblock %}
-
 {% block content %}
-    <h1>상세 내용</h1>
-    <h2>제목: {{ board.title }}</h2>
-    <p>내용: {{ board.content }}</p>
-    <p>작성자: {{ board.author.name }}</p>
-  
-    <!-- 수정 링크 -->
-    <a href="{% url 'board:board_edit' board.pk %}">수정</a>
-  
-    <!-- 삭제 링크 -->
-    <a href="#" onclick="confirmDelete('{{ board.pk }}');">삭제</a>
-    <a href="{% url 'board:board_list' %}">목록으로 돌아가기</a>
-    <!-- JavaScript 코드 -->
-    <script>
-        function confirmDelete(boardId) {
-            if (confirm("정말 삭제하시겠습니까?")) {
-                deleteBoard(boardId);
-            }
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>게시판</title>
+
+    <style>
+
+        .container {
+
+            max-width: 800px;
+
+            margin: 0 auto;
+
+            padding: 20px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 8px;
+
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+            background-color: #f9f9f9;
+
+            overflow: hidden;
+
+            position: relative;
+
         }
 
-        function deleteBoard(boardId) {
-            fetch(`/board/${boardId}/delete/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ boardId: boardId })
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert('게시물이 삭제되었습니다.');
-                    window.location.href = '{% url "board:board_list" %}';
-                } else {
-                    alert('삭제에 실패하였습니다.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('삭제에 실패하였습니다.');
-            });
+        h1 {
+
+            text-align: center;
+
+            color: #333;
+
         }
+
+        .content-box {
+
+            border: 1px solid #ddd;
+
+            padding: 20px;
+
+            margin-bottom: 20px;
+
+            border-radius: 8px;
+
+            background-color: #fff;
+
+            word-wrap: break-word;
+
+            overflow: auto;
+
+        }
+
+        .separator {
+
+            border-top: 1px solid #ddd;
+
+            margin: 20px 0;
+
+        }
+
+        .buttons {
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 10px;
+
+            margin-top: 20px;
+
+        }
+
+        .buttons a {
+
+            text-decoration: none;
+
+            padding: 10px 20px;
+
+            border-radius: 5px;
+
+            color: #fff;
+
+        }
+
+        .edit-button {
+
+            background-color: #4CAF50;
+
+        }
+
+        .delete-button {
+
+            background-color: #f44336;
+
+        }
+
+        .back-button {
+
+            background-color: #2196F3;
+
+            position: absolute;
+
+            top: 20px;
+
+            right: 20px;
+
+            text-decoration: none;
+
+            padding: 10px 20px;
+
+            border-radius: 5px;
+
+            color:#fff!important; 
+
+            font-weight: bold;
+
+        }
+
+        .author-date {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            margin-top: 10px;
+
+        }
+
+    </style>
+
+    <script>
+
+        function confirmDelete(boardId) {
+
+            if (confirm("정말 삭제하시겠습니까?")) {
+
+                deleteBoard(boardId);
+
+            }
+
+        }
+ 
+        function deleteBoard(boardId) {
+
+            fetch(`/board/${boardId}/delete/`, {
+
+                method: 'POST',
+
+                headers: {
+
+                    'X-CSRFToken': '{{ csrf_token }}',
+
+                    'Content-Type': 'application/json'
+
+                },
+
+                body: JSON.stringify({ boardId: boardId })
+
+            })
+
+            .then(response => {
+
+                if (response.ok) {
+
+                    alert('게시물이 삭제되었습니다.');
+
+                    window.location.href = '{% url "board:board_list" %}';
+
+                } else {
+
+                    alert('삭제에 실패하였습니다.');
+
+                }
+
+            })
+
+            .catch(error => {
+
+                console.error('Error:', error);
+
+                alert('삭제에 실패하였습니다.');
+
+            });
+
+        }
+
     </script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1><strong>상세 내용</strong></h1>
+
+        <a href="{% url 'board:board_list' %}" class="back-button">목록으로 돌아가기</a>
+
+        <div class="content-box">
+
+            <h2>제목: {{ board.title }}</h2>
+
+            <div class="separator"></div>
+
+            <p>내용: {{ board.content }}</p>
+
+        </div>
+
+        <div class="author-date">
+
+            <p>작성일: {{ board.created_at }}</p>
+
+            <p>작성자: {{ board.author.name }}</p>
+
+        </div>
+
+        <div class="buttons">
+
+            <a href="{% url 'board:board_edit' board.pk %}" class="edit-button">수정</a>
+
+            <a href="javascript:void(0);" onclick="confirmDelete('{{ board.pk }}');" class="delete-button">삭제</a>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+
+ 
+
+ 
+ 
 {% endblock %}
+
+ 

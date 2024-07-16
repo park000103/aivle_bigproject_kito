@@ -31,7 +31,7 @@ def login(request):
         password = request.POST['password']
         user = auth.authenticate(request, user_id=userid, password=password)
         if user is not None:
-            if user.is_approved in [1, 2]:  # 관리자의 승인이 필요
+            if user.is_approved in [1, 2, 99]:  # 관리자의 승인이 필요
                 auth.login(request, user)
                 return redirect('/admin/')  # 로그인 후 /admin/ URL로 리다이렉트
             else:

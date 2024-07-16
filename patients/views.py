@@ -71,7 +71,7 @@ def patient_search_view(request):
 def search_patients(request):
     name = request.GET.get('name')
     birth = request.GET.get('birth')
-    patients = Patient.objects.filter(patient_name__icontains=name, patient_birth=birth)
+    patients = Patient.objects.filter(patient_name__exact=name, patient_birth=birth)
     serializer = PatientSerializer(patients, many=True)
     return Response(serializer.data)
 

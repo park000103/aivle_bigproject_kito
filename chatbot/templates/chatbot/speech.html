@@ -168,7 +168,7 @@
             }
         }
         #chat-log {
-            max-height: 400px; /* 적절한 높이 설정 */
+            max-height: 800px; /* 적절한 높이 설정 */
             overflow-y: auto; /* 스크롤 가능하도록 설정 */
         }
     </style>
@@ -239,6 +239,10 @@
                         var messageData = messages[index];
                         var message = messageData.message;
                         var delay = messageData.delay || 0;
+
+                        if (message === "Sorry, I didn’t get that. Please try again.") {
+                            message = "죄송합니다. 다시 말씀해주세요.";
+                        }
 
                         if (delay > 0) {
                             var typingIndicator = $('<div><strong>Bot:</strong> <span class="typing-indicator"></span></div>');

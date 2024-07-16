@@ -32,7 +32,7 @@ class ConsultationPaymentListView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class ConsultationPayListView(APIView):
-    def get(self, request, patient_id=None, format=None):
+    def get(self, request, patient_id=None, format=None,id =None ):
         # Payment 테이블에 있는 consultation_id로 필터링하여 Consultation 객체들을 가져옵니다.
         consultations = Consultation.objects.filter(id__in=Payment.objects.values('consultation_id').distinct())
         
@@ -49,7 +49,9 @@ class ConsultationPayListView(APIView):
             except ValueError:
                 return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        if patient_id:
+        if id:
+            consultations = consultations.filter(id=id)
+        elif patient_id:
             consultations = consultations.filter(patient_id=patient_id)
             
         serializer = ConsultationPaySerializer(consultations, many=True)
