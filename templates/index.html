@@ -75,17 +75,18 @@
 
         const floor = 1
 
-        url = `https://1b69-59-13-4-65.ngrok-free.app/departments/floor-map/${floor}/`;
-
+        //url = `https://1bd8-218-147-139-139.ngrok-free.app/departments/floor-map/${floor}/`;
+        url = `https://1bd8-218-147-139-139.ngrok-free.app/departments/floor-map/${floor}/`;
+        alert(url)
         fetch(url)
         .then(response => response.json())
         .then(data => {
             console.log(data);
-
             // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
             var queryParams = new URLSearchParams();
             queryParams.append('json_data', JSON.stringify(data));
             console.log(queryParams);
+            alert(queryParams);
             window.location.href = '/departments/floor_map/?' + queryParams.toString();
         })
         .catch(error => {
@@ -97,7 +98,7 @@
         location.href = "/chatbot/";
     }
     function moveAdmin(){
-        location.href = "http://1b69-59-13-4-65.ngrok-free.app/admin";
+        location.href = "http://1bd8-218-147-139-139.ngrok-free.app/admin";
     }
 </script>
 </html>

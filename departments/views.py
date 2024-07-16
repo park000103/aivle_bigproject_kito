@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from .models import *
 from rest_framework import status
 from .serializers import *
+from django.http import JsonResponse
 import json
 
 @api_view(['GET'])
@@ -50,9 +51,42 @@ def floor_map_detail(request, floor):
         return Response({'error': 'Floor not found'}, status=status.HTTP_404_NOT_FOUND)
     
 def floor_map(request):
-    print(request)
+    print('~~~~~ : ', request)
     json_data = request.GET.get('json_data', '{}')
     floor_map_image = json.loads(json_data)
     print(json_data)
     print(floor_map_image)
     return render(request, 'departments/floor_map.html', {'floor_map_image':floor_map_image})
+
+def floor_map_search(request):
+    print(request)
+    print(request.GET)
+    json_data = request.GET.get('search', None)
+    print(json_data)
+    response_data = {
+    'department': json_data
+    }
+    print(response_data)
+    return JsonResponse(response_data)
+
+def floor_keyboard(request):
+    return render(request, 'departments/floor_keyboard.html')
+
+def floor_map_search_page(request):
+    print('floor_map_search_page : ', request)
+    json_data = request.GET.get('json_data', '{}')
+    floor_map_image = json.loads(json_data)
+    return render(request, 'departments/floor_search_page.html', {'floor_map_image':floor_map_image})
+
+@api_view(['GET'])
+def map_search(request):
+    search = request.GET.get('search')
+    department = Departments.objects.get(departments_name=search)
+    print('department : ', department)
+    try:
+        departmentLocations = DepartmentLocations.objects.get(departments_id=department.id)
+        serializer = DepartmentLocationsSerializer(departmentLocations)
+        print('serializer : ', serializer)
+        return Response(serializer.data)
+    except DepartmentLocations.DoesNotExist:
+        return Response({'error': 'DepartmentLocations not found'}, status=status.HTTP_404_NOT_FOUND)

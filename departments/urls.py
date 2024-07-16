@@ -9,4 +9,8 @@ urlpatterns = [
     path('department-locations/<int:department_id>/', department_locations_detail, name='department_locations_detail'),
     path('floor-map/<int:floor>/', floor_map_detail, name='floor_map_detail'),
     path('floor_map/', floor_map, name='floor_map'),
+    path('map_search/', map_search, name='map_search'),
+    path('floor_map/search_page/', floor_map_search_page, name='floor_map_search_page'),
+    path('floor_keyboard/', floor_keyboard, name='floor_keyboard'),
+    path('floor-map/search/', floor_map_search, name='floor_map_search'),
 ]

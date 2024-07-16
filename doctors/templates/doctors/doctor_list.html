@@ -40,6 +40,11 @@
         </div>
         <button type='button' id="select-btn" onclick='check_radio()'>에약하기</button>
     </div>
+    <div id="modal" class="modal-overlay">
+        <div class="modal-window">
+            <p id="modal-text">예약이 완료 되었습니다.</p>
+        </div>
+    </div>
     <footer role="contentinfo" onclick="moveChat()">
         <div class="footer_wrap">
             <img src="../images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
@@ -76,7 +81,7 @@
                 jsonObject[key] = value;
             });
             
-            url = 'https://1b69-59-13-4-65.ngrok-free.app/reservations/create/'; 
+            url = 'https://1bd8-218-147-139-139.ngrok-free.app/reservations/create/'; 
 
             const csrftoken = getCookie('csrftoken');
 
@@ -91,9 +96,12 @@
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                alert('예약완료');
-
-                window.location.href = '/';
+                var modal = document.getElementById("modal")
+                modal.style.display="flex";
+                setTimeout(function(){
+                    window.location.href = '/';
+                },2000);
+                
             })
             .catch(error => {
                 console.error('Error:', error);
