@@ -12,10 +12,8 @@
     <div class="sc-container">
         <p id="sc-text">처방전 목록</p>
         <div id="sc-list">
-            <img src="/images/images/prescriptions/캡처1.png" alt="이미지">
-            <input value='{{prescription}}'/>
             {% if prescription.prescription_image %}
-                <img src="{{ prescription.prescription_image.url }}" alt="이미지">
+                <img src="{{ prescription.prescription_image }}" alt="이미지">
             {% else %}
                 <p>이미지가 없습니다.</p>
             {% endif %}
@@ -51,7 +49,7 @@
 <script>
 
     function moveChat(){
-        location.href = "chat.html";
+        location.href = "../chatbot";
     }
 </script>
 </html>

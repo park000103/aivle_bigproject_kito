@@ -21,7 +21,8 @@
                 document.getElementsByClassName("payment-card")[0].style.display = "none";
                 document.getElementsByClassName("payment-other")[0].style.display = "flex";
             }
-            url = '/prescriptions/prescription?consultation_id=' + consultation_id;
+            //url = '/prescriptions/prescription?consultation_id=' + consultation_id;
+            url = '/prescriptions/prescription/' + consultation_id;
         });
     </script>
     <!-- <meta charset="utf-8" http-equiv="Refresh" content="10; prescription.html"> -->
@@ -48,7 +49,30 @@
     <script>
 
         function redirectWithParams() {
-            window.location.href = url;
+            //window.location.href = url;
+
+            const jsonObject = {};
+
+            jsonObject['consultation_id'] = consultation_id;
+
+            const jsonString = JSON.stringify(jsonObject);  
+
+            //url = `https://1b69-59-13-4-65.ngrok-free.app/consultations/afpayment/${int_id}/` + toQueryString(jsonObject);
+
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
+                var queryParams = new URLSearchParams();
+                queryParams.append('json_data', JSON.stringify(data));
+
+                // window.location.href를 사용하여 새로운 페이지로 이동
+                //url = '/prescriptions/prescription?consultation_id=' + consultation_id;
+                window.location.href = '/prescriptions/prescription?' + queryParams.toString();
+            })
+            .catch(error => console.error('Error:', error));
         }
         var modal = document.getElementById("modal")
 
@@ -68,7 +92,7 @@
 </body>
 <script>
     function moveChat(){
-        location.href = "chat.html";
+        location.href = "../chatbot";
     }
 </script>
 </html>

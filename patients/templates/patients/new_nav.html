@@ -6,8 +6,8 @@
 <head>
     <title> KIOSK </title>
     <!-- <meta charset="utf-8"> -->
-    <meta charset="utf-8" http-equiv="Refresh" content="10; index.html">
-    <link rel="stylesheet" href="../static/style.css">
+    <meta charset="utf-8" http-equiv="Refresh" content="3; /">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     {% include 'header.html' %}
@@ -17,13 +17,13 @@
     </div>
     <footer role="contentinfo" onclick="moveChat()">
         <div class="footer_wrap">
-            <img src="../images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+            <img src="/images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
         </div>
     </footer>
 </body>
 <script>
     function moveChat(){
-        location.href = "chat.html";
+        location.href = "../chatbot";
     }
 </script>
 </html>

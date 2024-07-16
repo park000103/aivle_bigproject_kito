@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!-- 제증명 -->
+<!-- {% load static %} -->
+<html lang="ko">
+<head>
+    <title> KIOSK </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    {% include 'header.html' %}
+    <form name="patient" method="post" id="myForm" action="/consultations/detailconsultation/page">
+        {% csrf_token %}
+        <div class="patient-container">
+            <p id="patient-text">세부내역</p>
+            <div id="patient-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detail in detailconsul %}
+                            <tr><td>진료일자</td><td>{{ detail.consultation_date|date:"Y년 n월 j일 G:i" }} </td></tr>
+                            <tr><td>담당의</td><td>{{ detail.doctor_id.doctor_name }}</td></tr>
+                            <tr><td>진료과</td><td>{{ detail.doctor_id.department.departments_name }}</td></tr>
+                            <tr><td>진료내용</td><td>{{ detail.description }}</td></tr>
+                            <tr><td>진료비</td><td>{{ detail.amount }}</td></tr>
+                            {% for det in detail.detailconsultations %}
+                                <tr><td>세부진료내용</td><td>{{ det.name }}</td></tr>
+                                <tr><td>세부진료비</td><td>{{ det.amount }}</td></tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" id="scprint-btn" onclick='change()'>출력</button>
+        </div>
+    </form>
+    <div id="modal" class="modal-overlay">
+        <div class="modal-window">
+            <p id="modal-text">출력되었습니다.</p>
+        </div>
+    </div>
+    <footer role="contentinfo" onclick="moveChat()">
+        <div class="footer_wrap">
+            <img src="/images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+        </div>
+    </footer>
+</body>
+<script>
+    function change(){
+        var modal = document.getElementById("modal")
+        const buttonText = document.getElementById('scprint-btn');
+        buttonText.innerText = '출 력 중';
+
+        setTimeout(function(){
+            buttonText.innerText = '출 력 하 기';
+             modal.style.display="flex";
+        },2000);
+        setTimeout(function(){
+            location.href = "/";
+        },3000);
+    }
+
+    function moveChat(){
+        location.href = "../chatbot";
+    }
+</script>
+</html>

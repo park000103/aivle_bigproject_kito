@@ -58,11 +58,19 @@ class ConsultationPayListView(APIView):
                 return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
         
         if patient_id:
-            consultations = consultations.filter(patient_id=patient_id)
+            consultations = consultations.filter(patient_id=patient_id)     
             
         serializer = ConsultationPaySerializer(consultations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class ConsultationPayView(APIView):
+    def get(self, request, consultation_id):
+        consultations = Consultation.objects.filter(id__in=Payment.objects.values('consultation_id').distinct())
+        if id:
+            consultations = consultations.filter(id=consultation_id)       
+        serializer = ConsultationPaySerializer(consultations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 def search_patient_view(request):
     return render(request, 'consultations/consul_auth.html')
 
@@ -81,6 +89,31 @@ def consultations_search(request):
     patients = json.loads(json_data)
     print('consultations_search : ', patients)
     return render(request, 'consultations/consul_auth2.html', {'patients': patients})
+
+def detailconsul_page(request):
+    json_data = request.GET.get('json_data', '{}')
+    detailconsul = json.loads(json_data)
+    print('detailconsul : ', detailconsul)
+    
+    for detailcon in detailconsul:
+        detailcon_date_str = detailcon['consultation_date']
+        detailcon_date = datetime.fromisoformat(detailcon_date_str.replace('Z', '+00:00'))
+
+        # 변환된 날짜를 consultation 객체에 추가
+        detailcon['consultation_date'] = detailcon_date
+    return render(request, 'consultations/detailconsul.html', {'detailconsul': detailconsul})
+
+def detail_consultations_list(request):
+    json_data = request.GET.get('json_data', '{}')
+    detailconsul_list = json.loads(json_data)
+
+    for consultation in detailconsul_list:
+        consultation_date_str = consultation['consultation_date']
+        consultation_date = datetime.fromisoformat(consultation_date_str.replace('Z', '+00:00'))
+
+        # 변환된 날짜를 consultation 객체에 추가
+        consultation['consultation_date'] = consultation_date
+    return render(request, 'consultations/detailconsul_list.html', {'detailconsul_list': detailconsul_list})
 
 @api_view(['GET'])
 def patient_search_results(request):

@@ -50,7 +50,7 @@
                             <td><input type="radio" name="selected_patient" value="{{ patient.id }}" onclick="toggleRadio(this)"></td>
                             <td>{{ patient.id }}</td>
                             <td>{{ patient.patient_name }}</td>
-                            <td>{{ patient.patient_birth|date:"Y-m-d" }}</td>
+                            <td>{{ patient.patient_birth|date:"Y년 n월 j일 G:i" }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -100,7 +100,7 @@
                 const jsonString = JSON.stringify(jsonObject);  
 
                 int_id = Number(selected_id);
-                url = `https://111c-14-36-58-174.ngrok-free.app/patients/${int_id}/reservations/`;
+                url = `https://1b69-59-13-4-65.ngrok-free.app/patients/${int_id}/reservations/`;
 
                 fetch(url)
                 .then(response => response.json())

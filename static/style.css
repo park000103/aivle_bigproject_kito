@@ -413,7 +413,7 @@ input {
     /* font-weight: bold; */
 }
 
-/* chat.html */
+/* ../chatbot */
 .chat-wrap{
     height: 110px;
     /* width: 1000px; */
@@ -469,7 +469,7 @@ input {
 #patient-list{
     font-size: 35px;
     text-align: center;
-    width: 700px;
+    width: 900px;
     height: 600px;
     border-radius: 30px;
     background-color: #f5f5f5;
@@ -605,7 +605,7 @@ input {
 #payment-list{
     font-size: 35px;
     text-align: center;
-    width: 700px;
+    width: 900px;
     height: 450px;
     border-radius: 30px;
     background-color: #f5f5f5;
