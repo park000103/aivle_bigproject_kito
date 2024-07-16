@@ -10,20 +10,9 @@ class FloorMap(models.Model): #층지도
     
     def __str__(self):
         return f"{self.floor}층"
-
-class Disease(models.Model): #질병
-    disease_name = models.CharField(max_length=200,verbose_name="질병명")
-    class Meta:
-        db_table = "disease"
-        verbose_name = "질병"
-        verbose_name_plural = "질병들"
-    def __str__(self):
-        return self.disease_name
-
         
 class Departments(models.Model): #진료부서
     departments_name = models.CharField(max_length=100,verbose_name="진료부서명")
-    diseases = models.ManyToManyField(Disease,blank=True, verbose_name='질병')
     class Meta:
         db_table = "departments"
         verbose_name = "진료부서"

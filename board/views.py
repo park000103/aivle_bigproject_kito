@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Board
+from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import BoardForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -7,7 +9,21 @@ from django.contrib import messages
 
 def board_list(request):
     boards = Board.objects.all()
-    return render(request, 'board/board_list.html', {'boards': boards})
+    # 페이지네이션 설정
+    paginator = Paginator(boards, 10)  # 한 페이지당 10개씩 보여주기
+    page = request.GET.get('page')
+
+    try:
+        boards = paginator.page(page)
+    except PageNotAnInteger:
+        boards = paginator.page(1)
+    except EmptyPage:
+        boards = paginator.page(paginator.num_pages)
+
+    context = {
+        'boards': boards,
+    }
+    return render(request, 'board/board_list.html', context)
 
 def board_detail(request, pk):
     board = get_object_or_404(Board, pk=pk)

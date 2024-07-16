@@ -5,17 +5,18 @@ import requests
 from django.views.decorators.csrf import csrf_exempt
 from google.cloud import speech
 
-VOICEFLOW_API = ''  # Voiceflow API 키 넣기
+# VOICEFLOW_API = 'VF.DM.667ba2ff4a0c1d73a1ce0286.xZ9RCZYjqXSs0S0f'  # Voiceflow API 키 넣기
+VOICEFLOW_API = 'VF.DM.667a7b6b6713dc7c12c4b6b4.TcI959ncBBs9W6gW' #voiceflow api키 넣기   정민
 
 def index(request):
     user_id = 'unique_user_id'  # 사용자 고유 ID 설정
-    initial_message = get_initial_message(user_id)
-    return render(request, 'chatbot/index.html', {'initial_message': initial_message})
+    initial_messages = get_initial_message(user_id)
+    return render(request, 'chatbot/index.html', {'initial_messages': initial_messages})
 
 def speech_page(request):
     user_id = 'unique_user_id'  # 사용자 고유 ID 설정
-    initial_message = get_initial_message(user_id)
-    return render(request, 'chatbot/speech.html', {'initial_message': initial_message})
+    initial_messages = get_initial_message(user_id)
+    return render(request, 'chatbot/speech.html', {'initial_messages': initial_messages})
 
 def get_initial_message(user_id):
     url = f"https://general-runtime.voiceflow.com/state/user/{user_id}/interact?logs=off"
@@ -36,21 +37,28 @@ def get_initial_message(user_id):
     }
     response = requests.post(url, json=payload, headers=headers)
     print(response.text)
+    messages = []
     if response.status_code == 200:
         data = response.json()
         for item in data:
             if 'message' in item['payload']:
-                return item['payload']['message']
-    return None
+                message = item['payload']['message']
+                delay = item.get('payload', {}).get('delay', 0)
+                messages.append({'message': message, 'delay': delay})
+    return messages
 
 @csrf_exempt
 def send_message(request):
     if request.method == "POST":
         message = request.POST.get('message')
         user_id = 'unique_user_id'
+        print(message)
         url = f"https://general-runtime.voiceflow.com/state/user/{user_id}/interact?logs=off"
         payload = {
-            "action": {"type": "text", "payload": message},
+            "action": {
+                "type": "text",
+                "payload": message
+            },
             "config": {
                 "tts": False,
                 "stripSSML": True,
@@ -65,24 +73,29 @@ def send_message(request):
             "Authorization": VOICEFLOW_API
         }
         response = requests.post(url, json=payload, headers=headers)
+        print(response.text)
         if response.status_code == 200:
             try:
                 data = response.json()
                 messages = []
-                for item in data:
-                    if item['type'] == 'text' and 'message' in item['payload']:
-                        message = item['payload']['message']
-                        delay = item['payload'].get('delay', 0)
-                        messages.append({'type': 'text', 'content': message, 'delay': delay})
-                    elif item['type'] == 'visual' and 'image' in item['payload']:
-                        image = item['payload']['image']
-                        messages.append({'type': 'image', 'content': image, 'delay': 0})
+                if isinstance(data, list):
+                    for item in data:
+                        if 'message' in item.get('payload', {}):
+                            message = item['payload']['message']
+                            delay = item.get('payload', {}).get('delay', 0)
+                            messages.append({'message': message, 'delay': delay})
+                elif isinstance(data, dict) and 'message' in data.get('payload', {}):
+                    message = data['payload']['message']
+                    delay = data.get('payload', {}).get('delay', 0)
+                    messages.append({'message': message, 'delay': delay})
                 return JsonResponse({'messages': messages})
             except ValueError as e:
                 return JsonResponse({'error': 'Invalid JSON response from API'}, status=500)
         else:
             return JsonResponse({'error': 'Failed to interact with Voiceflow API'}, status=response.status_code)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 @csrf_exempt
 def transcribe(request):
     if request.method == 'POST':
@@ -108,5 +121,5 @@ def transcribe(request):
             return JsonResponse({'error': str(e)}, status=400)
     else:
         user_id = 'unique_user_id'
-        initial_message = get_initial_message(user_id)
-        return render(request, 'chatbot/speech.html', {'initial_message': initial_message})
+        initial_messages = get_initial_message(user_id)
+        return render(request, 'chatbot/speech.html', {'initial_messages': initial_messages})

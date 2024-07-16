@@ -167,13 +167,15 @@
                 transform: rotate(360deg);
             }
         }
+        #chat-log {
+            max-height: 400px; /* 적절한 높이 설정 */
+            overflow-y: auto; /* 스크롤 가능하도록 설정 */
+        }
     </style>
 </head>
 <body>
     <h1>Chat</h1>
-    <div id="chat-log2">
-        <div>{{ initial_message|safe }}</div>
-    </div>
+    <div id="chat-log2"></div>
     <div id="chat-log">
         <div></div>
     </div>
@@ -187,6 +189,14 @@
 
     <script>
         $(document).ready(function() {
+            const initialMessages = {{ initial_messages|safe }};
+
+            function displayInitialMessages() {
+                if (initialMessages.length > 0) {
+                    displayMessagesWithDelay(initialMessages);
+                }
+            }
+
             $('#chat-message-submit').click(function() {
                 sendMessage();
             });
@@ -209,6 +219,7 @@
                     success: function(data) {
                         console.log(data);
                         $('#chat-log').append('<div><strong>You:</strong> ' + $('<div>').text(message).html() + '</div>');
+                        scrollToBottom(); // 스크롤을 아래로 이동
                         if (data.messages) {
                             displayMessagesWithDelay(data.messages);
                         }
@@ -222,42 +233,41 @@
 
             function displayMessagesWithDelay(messages) {
                 var index = 0;
-    
+
                 function displayNextMessage() {
                     if (index < messages.length) {
                         var messageData = messages[index];
+                        var message = messageData.message;
                         var delay = messageData.delay || 0;
-    
-                        if (messageData.type === 'text') {
-                            var message = messageData.content;
-                            if (message === "Sorry, I didn’t get that. Please try again.") {
-                                message = "죄송합니다. 다시 말씀해주세요.";
-                            }
-    
-                            if (delay > 0) {
-                                var typingIndicator = $('<div><strong>Bot:</strong> <span class="typing-indicator"></span></div>');
-                                $('#chat-log').append(typingIndicator);
-                                setTimeout(function() {
-                                    typingIndicator.html('<strong>Bot:</strong> ' + message);
-                                    index++;
-                                    displayNextMessage();
-                                }, delay);
-                            } else {
-                                $('#chat-log').append('<div><strong>Bot:</strong> ' + message + '</div>');
+
+                        if (delay > 0) {
+                            var typingIndicator = $('<div><strong>Bot:</strong> <span class="typing-indicator"></span></div>');
+                            $('#chat-log').append(typingIndicator);
+                            scrollToBottom(); // 스크롤을 아래로 이동
+                            setTimeout(function() {
+                                typingIndicator.html('<strong>Bot:</strong> ' + message);
+                                scrollToBottom(); // 스크롤을 아래로 이동
                                 index++;
                                 displayNextMessage();
-                            }
-                        } else if (messageData.type === 'image') {
-                            var imageUrl = messageData.content;
-                            $('#chat-log').append('<div><strong>Bot:</strong> <img src="' + imageUrl + '" alt="Image"></div>');
+                            }, delay);
+                        } else {
+                            $('#chat-log').append('<div><strong>Bot:</strong> ' + message + '</div>');
+                            scrollToBottom(); // 스크롤을 아래로 이동
                             index++;
                             displayNextMessage();
                         }
                     }
                 }
-    
+
                 displayNextMessage();
             }
+
+            function scrollToBottom() {
+                var chatLog = $('#chat-log');
+                chatLog.scrollTop(chatLog.prop('scrollHeight'));
+            }
+
+            displayInitialMessages();
 
             let mediaRecorder;
             let audioChunks = [];
