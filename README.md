@@ -1,18 +1,30 @@
 # 🏫 음성인식을 통한 대화형 병원 키오스크
 
-> **"KITO 🤖 는 키오스크에서 대화를 통해 병원의 접수, 수납, 제증명, 길찾기 기능을 진행하여 노약자 등 디지털 소외계층을 위해 개발되었습니다.**
+> **"KITO 🤖 는 키오스크에서 대화를 통해 병원의 접수, 수납, 제증명, 길찾기 기능을 진행하여 노약자, 장애인, 농어민 등 디지털 소외계층을 위해 개발되었습니다.**
 >
 
 ![AI 6조 썸네일](https://github.com/user-attachments/assets/ada1e0d2-1984-4fee-9a21-ec611f1d22cc)
 
+## 📺 시연영상
+> 음성인식을 통한 대화형 챗봇 화면에 대한 시연영상입니다.
+
+
+[시연영상.mp4.zip](https://github.com/user-attachments/files/16398723/mp4.zip)
 
 
 ## 🫂팀원
 
-`AI 수도권 2반 6조`
+📌 `AI 수도권 2반 6조` 
 
-📌 심연준, 박정민, 박현일, 배지현, 윤석일, 이승연, 이정호
-
+| 팀원 | GitHub 프로필 | 설명 |
+|:---:|:---:|:---:|
+|👑심연준| [GitHub 프로필](https://github.com/cheolsu) | 백엔드 |
+| 배지현 | [GitHub 프로필](https://github.com/younghee) | 백엔드 |
+| 이정호 | [GitHub 프로필](https://github.com/youngsu) | 프론트엔드 |
+| 박현일 | [GitHub 프로필](https://github.com/youngsu) | 프론트엔드 |
+| 박정민 | [GitHub 프로필](https://github.com/youngsu) | AI 모델링 |
+| 이승연 | [GitHub 프로필](https://github.com/youngsu) | AI 모델링 |
+| 윤석일 | [GitHub 프로필](https://github.com/youngsu) | AI 모델링 |
 
 
 ## 🔍 목차
@@ -22,6 +34,7 @@
 - 아키텍처 정의서(Service Architecture)
 - DB 설계 (Database Design)
 - 개발 환경 (Development Environment)
+- AI 모델링 (AI Modeling)
 - 유저 인터페이스(User Interface)
 - 라이센스(License)
 
@@ -36,7 +49,6 @@
 > 
 
 
-
 ## 2️⃣ **서비스 플로우**
 
 <img width="639" alt="서비스 플로우" src="https://github.com/user-attachments/assets/81b30621-d8d6-4b91-b6cf-dbba4df7c307">
@@ -49,7 +61,17 @@
 
 <img width="588" alt="erd" src="https://github.com/user-attachments/assets/fd540f06-a5e4-462a-83ba-820ba49f98f7">
 
-## 5️⃣ **개발 환경**
+## 5️⃣ **AI 모델링**
+| <img src="https://github.com/user-attachments/assets/3a8a8136-dc6a-4e6e-b470-5b14876293a4" width="150"/> | <img src="https://github.com/user-attachments/assets/2c503e0c-8727-493d-8b2d-657c52522415" width="150"/> | <img src="https://github.com/user-attachments/assets/cc282606-7e1c-4f01-9dae-e5e5052d76ba" width="150"/> |
+|:-------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|
+| Google Cloud STT                                                                                       | Voiceflow                                                                       | KM-BERT                                                                       |
+| 음성인식모델                                                                                           | 대화흐름설계플랫폼                                                                     | 진료과 추천서비스                                                                     |
+
+
+
+
+
+## 6️⃣ **개발 환경**
 
 ### 🚀  FrontEnd
 
@@ -65,6 +87,11 @@
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+
+### 🪓 AI
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Google Colab](https://img.shields.io/badge/Google%20Colab-F9AB00?style=for-the-badge&logo=googlecolab&logoColor=white)
+![Voiceflow](https://img.shields.io/badge/Voiceflow-000000?style=for-the-badge&logo=voiceflow&logoColor=white)
 
 ### 👥  Etc
 
