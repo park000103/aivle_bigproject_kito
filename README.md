@@ -18,13 +18,13 @@
 
 | 팀원 | GitHub 프로필 | 설명 |
 |:---:|:---:|:---:|
-|👑심연준| <img src="https://github.com/KOR-YJ.png" width="50"> [GitHub 프로필](https://github.com/KOR-YJ) | 백엔드 |
-| 배지현 | <img src="https://github.com/Bae-JiHyeon.png" width="50"> [GitHub 프로필](https://github.com/Bae-JiHyeon) | 백엔드 |
-| 이정호 | <img src="https://github.com/이정호.png" width="50"> [GitHub 프로필]() | 프론트엔드 |
-| 박현일 | <img src="https://github.com/박현일.png" width="50"> [GitHub 프로필]() | 프론트엔드 |
+|👑심연준| <img src="https://github.com/KOR-YJ.png" width="50"><br> [GitHub 프로필](https://github.com/KOR-YJ) | 백엔드 |
+| 배지현 | <img src="https://github.com/Bae-JiHyeon.png" width="50"><br> [GitHub 프로필](https://github.com/Bae-JiHyeon) | 백엔드 |
+| 이정호 | <img src="https://github.com/이정호.png" width="50"><br> [GitHub 프로필]() | 프론트엔드 |
+| 박현일 | <img src="https://github.com/박현일.png" width="50"><br> [GitHub 프로필]() | 프론트엔드 |
 | 박정민 | <img src="https://github.com/park000103.png" width="50"><br> [GitHub 프로필](https://github.com/park000103) | AI 모델링 |
-| 이승연 | <img src="https://github.com/이승연.png" width="50"> [GitHub 프로필]() | AI 모델링 |
-| 윤석일 | <img src="https://github.com/윤석일.png" width="50"> [GitHub 프로필]() | AI 모델링 |
+| 이승연 | <img src="https://github.com/이승연.png" width="50"><br> [GitHub 프로필]() | AI 모델링 |
+| 윤석일 | <img src="https://github.com/윤석일.png" width="50"><br> [GitHub 프로필]() | AI 모델링 |
 
 
 
