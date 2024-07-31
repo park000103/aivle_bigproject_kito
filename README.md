@@ -16,16 +16,12 @@
 
 📌 `AI 수도권 2반 6조` 
 
-| 팀원 | GitHub 프로필 | 설명 |
-|:---:|:---:|:---:|
-|👑심연준| <img src="https://github.com/KOR-YJ.png" width="50"><br> [GitHub 프로필](https://github.com/KOR-YJ) | 백엔드 |
-| 배지현 | <img src="https://github.com/Bae-JiHyeon.png" width="50"><br> [GitHub 프로필](https://github.com/Bae-JiHyeon) | 백엔드 |
-| 이정호 | <img src="https://github.com/이정호.png" width="50"><br> [GitHub 프로필]() | 프론트엔드 |
-| 박현일 | <img src="https://github.com/박현일.png" width="50"><br> [GitHub 프로필]() | 프론트엔드 |
-| 박정민 | <img src="https://github.com/park000103.png" width="50"><br> [GitHub 프로필](https://github.com/park000103) | AI 모델링 |
-| 이승연 | <img src="https://github.com/이승연.png" width="50"><br> [GitHub 프로필]() | AI 모델링 |
-| 윤석일 | <img src="https://github.com/윤석일.png" width="50"><br> [GitHub 프로필]() | AI 모델링 |
-
+## Team
+| 👑 심연준 | 배지현 | 이정호 | 박현일 | 박정민 | 이승연 | 윤석일 |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|<img src="https://avatars.githubusercontent.com/u/101186255?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/97018919?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/96129738?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/96129738?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/103491409?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/96129738?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/96129738?v=4" width="100" height="100"/>|
+|[@Kor-YJ](https://github.com/Kor-YJ)|[@Bae-JiHyeon](https://github.com/Bae-JiHyeon)|||[@park000103](https://github.com/park000103)||[@IcandoDeveloper](https://github.com/IcandoDeveloper)|
+| 백엔드 | 백엔드 | 프론트엔드 | 프론트엔드 | AI 모델링 | AI 모델링 | AI 모델링 |
 
 
 ## 🔍 목차
