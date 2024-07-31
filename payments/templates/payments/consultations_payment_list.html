@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<!-- 환자 목록 조회 페이지 -->
+<!-- {% load static %} -->
+<html lang="ko">
+<head>
+    <title> KIOSK </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        tr, tbody {
+            font-size: 40px;
+        }
+        .select-btn {
+            font-size: 40px;
+        }
+        table, th, tr, td{
+            border: 1px solid;
+        }
+        tbody > tr td {
+            height:120px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    <form method="post" action="/payments/create/" id='myForm'>
+        {% csrf_token %}
+        <div class="payment-container">
+            <p id="payment-text"><span>{{patient_name}} 님</span><br>목록에서 수납을 원하시는 항목을 선택해 주세요</p>
+            <div id="payment-list" style="height: 550px">
+                {% if payments|length > 0 %}
+                <table style="border-collapse: collapse; transform: translate(25px, 15px); width: 95%;">
+                    <thead>
+                        <tr>
+                            <th>선택</th>
+                            <th>진료일자</th>
+                            <th>진료과</th>
+                            <th>수납액</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            {% for payment in payments %}
+                                <tr>
+                                    <td><input type="radio" name="consultation_id" value="{{ payment.id }}" onclick="toggleRadio(this)" style="width: 40px; height: 40px;"></td>
+                                    <td>{{ payment.consultation_date }}</td>
+                                    <td>{{ payment.department }}</td>
+                                    <td>{{ payment.total_amount }}</td>
+                                    <input type='hidden' name='patient_id' value=' {{ payment.patient_id }}'/>
+                                    <input type='hidden' name='amount' value=' {{ payment.total_amount }}'/>
+                                    <input type='hidden' name='consultation_id' value=' {{ payment.id }}'/>
+                                    <input type='hidden' name='payment_method' id="payment_method_{{payment.id}}"/>
+                                </tr>
+                            {% endfor %}
+                    </tbody>
+                </table>  
+                {% else %}
+                    수납 할 진료가 없습니다
+                {% endif %}              
+            </div>
+            {% if payments|length > 0 %}
+            <div class="btns-container">
+                <button type="button" id="payment-btn1" onclick="check_radio(event, '카드')">카 드 결 제</button>
+                <button type="button" id="payment-btn2" onclick="check_radio(event, '네이버페이')">간 편 결 제</button>
+            </div>
+            {% endif %}   
+        </div>
+
+    </form>
+    <footer role="contentinfo" onclick="moveChat()">
+        <div class="footer_wrap">
+            <img src="/images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+        </div>
+    </footer>
+</body>
+<script>
+
+    function toggleRadio(radio) {
+        if (radio.wasChecked) {
+            radio.checked = false;
+        }
+        // Toggle the `wasChecked` state
+        radio.wasChecked = radio.checked;
+    }
+    function toQueryString(params) {
+        return '?' + Object.keys(params)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+            .join('&');
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function check_radio(event, method){
+ 
+        let selected_id = null;
+        radios = document.getElementsByName('consultation_id');
+        let checked = false;
+
+        var clickedButtonId = event.target.id;
+        var pvValue = clickedButtonId === 'payment-btn1' ? 1 : 2;
+
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                checked = true;
+                selected_id = radios[i].value;
+                break;
+            }
+        }
+
+        if (checked) {
+            var paymentMethodInput = document.getElementById('payment_method_' + selected_id);
+            paymentMethodInput.value = method;
+
+            const form = document.getElementById('myForm');
+            const formData = new FormData(form);
+            const jsonObject = {};
+            formData.forEach((value, key) => {
+                jsonObject[key] = value;
+            });
+
+            const jsonString = JSON.stringify(jsonObject);  
+
+            int_id = Number(selected_id);
+
+            url = `https://f5d4-121-169-160-119.ngrok-free.app/payments/create/`;
+
+            const csrftoken = getCookie('csrftoken');
+
+            fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify(jsonObject)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                // window.location.href를 사용하여 새로운 페이지로 이동
+                window.location.href = '/payments/consultations_payment?' + 'pv=' + pvValue + '&consultation_id=' + int_id;
+            })
+            .catch(error => console.error('Error:', error));
+
+        } else {
+            alert('환자를 선택해주세요');
+        }
+    }
+
+    function moveChat(){
+        location.href = "/chatbot/transcribe/";
+    }
+</script>
+</html>

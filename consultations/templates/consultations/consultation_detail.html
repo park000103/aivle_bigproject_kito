@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation Detail</title>
+</head>
+<body>
+    <h1>Consultation Detail</h1>
+    <p>번호: {{ consultation.id }}</p>
+    <p>환자 번호: {{ consultation.patient_id.id }}</p>
+    <p>환자 이름: {{ consultation.patient_id.patient_name }}</p>
+    <p>의사 이름: {{ consultation.doctor_id.doctor_name }}</p>
+    <p>진료 일시: {{ consultation.consultation_date }}</p>
+    <p>진료비: {{ consultation.amount }}</p>
+    <p>예약 번호: {{ consultation.reservation_id }}</p>
+    <p>진료 내용: {{ consultation.description }}</p>
+    <h2>세부 진료내용</h2>
+    <ul>
+        {% for detail in consultation.detailconsultations %}
+            <li>{{ detail.name }} - {{ detail.amount }}</li>
+        {% endfor %}
+    </ul>
+</html>

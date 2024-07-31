@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<!-- 제증명 -->
+<!-- {% load static %} -->
+<html lang="ko">
+<head>
+    <title> KIOSK </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        table, th, tr, td{
+            border: 1px solid;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    <form name="patient" method="post" id="myForm" action="/consultations/detailconsultation/page">
+        {% csrf_token %}
+        <div class="patient-container">
+            <div id="patient-list" style='height: 750px;'>
+                <p><strong>세부 내역서</strong></p>
+                <p style='margin: 15px;'><strong>환자 번호 : </strong>{{detailconsul.0.patient_id.id}}</p>
+                <p style='margin: 15px;'><strong>환자 이름 : </strong>{{detailconsul.0.patient_id.patient_name}}</p>
+                <p style='margin: 15px;'><strong>환자 생년월일 : </strong>{{detailconsul.0.patient_id.patient_birth}}</p>
+                <table style="width: 90%;border-collapse: collapse;transform: translate(44px, 18px);">
+                    <thead>
+                        <tr>
+                            <th>결제 날짜</th>
+                            <th>항목</th>
+                            <th>금액</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detail in detailconsul %}
+                            <tr style='height: 100px;'>
+                                <td>{{ detail.consultation_date|date:"Y년 n월 j일" }}</td>
+                                <td>{{ detail.description }}</td>
+                                <td>{{ detail.amount }}</td>
+                            </tr>
+                            {% if detail.detailconsultations %}
+                                {% for det in detail.detailconsultations %}
+                                    <tr style='height: 100px;'>
+                                        <td>{{ detail.consultation_date|date:"Y년 n월 j일" }} </td>
+                                        <td>{{ det.name }}</td>
+                                        <td>{{ det.amount }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" id="scprint-btn" onclick='change()' style='margin-top: 0px;'>출력</button>
+        </div>
+    </form>
+    <div id="modal" class="modal-overlay">
+        <div class="modal-window">
+            <p id="modal-text">출력되었습니다.</p>
+        </div>
+    </div>
+    <footer role="contentinfo" onclick="moveChat()">
+        <div class="footer_wrap">
+            <img src="/images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+        </div>
+    </footer>
+</body>
+<script>
+    function change(){
+        var modal = document.getElementById("modal")
+        const buttonText = document.getElementById('scprint-btn');
+        buttonText.innerText = '출 력 중';
+
+        setTimeout(function(){
+            buttonText.innerText = '출 력 하 기';
+             modal.style.display="flex";
+        },2000);
+        setTimeout(function(){
+            location.href = "/";
+        },3000);
+    }
+
+    function moveChat(){
+        location.href = "/chatbot/transcribe/";
+    }
+</script>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!-- 예약 목록 조회 페이지 -->
+<!-- {% load static %} -->
+<html lang="ko">
+<head>
+    <title> KIOSK </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class="sc-container">
+        <div id="sc-list" style="transform: translate(-58px, -23px); background-color: #e1edf4" >
+            {% if prescription.prescription_image %}
+                <img src="{{ prescription.prescription_image }}" alt="이미지" style="width: 780px; height: 800px;">
+            {% else %}
+                <p>이미지가 없습니다.</p>
+            {% endif %}
+        </div>
+        <button type="button" id="scprint-btn" onclick="change()" style="transform: translate(-11px, 195px); margin=0px;">출 력 하 기</button>
+    </div>
+    <div id="modal" class="modal-overlay">
+        <div class="modal-window">
+            <p id="modal-text">출력되었습니다.</p>
+        </div>
+    </div>
+    <script>
+        function change(){
+            var modal = document.getElementById("modal")
+            const buttonText = document.getElementById('scprint-btn');
+            buttonText.innerText = '출 력 중';
+
+            setTimeout(function(){
+                buttonText.innerText = '출 력 하 기';
+                 modal.style.display="flex";
+            },2000);
+            setTimeout(function(){
+                location.href = "/";
+            },3000);
+        }
+    </script>
+    <footer role="contentinfo" onclick="moveChat()">
+        <div class="footer_wrap">
+            <img src="/images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+        </div>
+    </footer>
+</body>
+<script>
+
+    function moveChat(){
+        location.href = "/chatbot/transcribe/";
+    }
+</script>
+</html>

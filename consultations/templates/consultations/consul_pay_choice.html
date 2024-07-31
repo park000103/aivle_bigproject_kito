@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!-- 신규 / 재발급 선택 페이지 -->
+<!-- {% load static %} -->
+<html lang="ko">
+<head>
+    <title> KIOSK </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    {% include 'header.html' %}
+    <section class="select_con_new" onclick="moveConsul()">
+        <div class="new">
+            <img src="/images/세부.png" alt="세부" id="new_img" style='width: 40%; transform: translate(-10px, 43px);'><div class="menu_n_new">세부내역서</div>
+        </div>
+    </section>
+    <section class="select_con_re" onclick="movePay()">
+        <div class="revisit">
+             <img src="/images/납입.png" alt="납입" id="re_img" style='width: 45%; transform: translate(-7px, 58px);'><div class="menu_n_re">납입증명서</div>
+        </div>
+    </section>
+    <footer role="contentinfo"  onclick="moveChat()">
+        <div class="footer_wrap">
+            <img src="/images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+        </div>
+    </footer>
+</body>
+<script>
+    function moveConsul(){
+        location.href = "/consultations/search?choice=1";
+    }
+    function movePay(){
+        location.href = "/consultations/search?choice=2";
+    }
+    function moveChat(){
+        location.href = "/chatbot/transcribe/";
+    }
+</script>
+</html>

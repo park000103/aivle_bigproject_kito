@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!-- 수납 -->
+<!-- {% load static %} -->
+<html lang="ko">
+<head>
+    <title> KIOSK </title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        var url = document.location.href;
+        var query = window.location.search;
+        var param = new URLSearchParams(query);
+        var pv = param.get('pv');
+        var consultation_id = param.get('consultation_id');
+        console.log(pv);
+        $(document).ready(function(){
+            if (pv == 1){
+                document.getElementsByClassName("payment-card")[0].style.display = "flex";
+                document.getElementsByClassName("payment-other")[0].style.display = "none";
+            } else{
+                document.getElementsByClassName("payment-card")[0].style.display = "none";
+                document.getElementsByClassName("payment-other")[0].style.display = "flex";
+            }
+            url = '/prescriptions/prescription/' + consultation_id;
+        });
+    </script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class="payment-card">
+        <p id="payment-card-text">결제하실 카드를<br>투입구에 넣어주세요.</p>
+        <img src="/images/payment.png" id="card-img">
+    </div>
+    <div class="payment-other">
+        <p id="payment-other-text1">화면의 QR코드를 스캔해 주세요.</p>
+        <P id="payment-other-text2">네이버페이, 카카오페이, 제로페이, SSG페이,<br>L페이, 앱카드 결제가 가능합니다.</P>
+        <img src="/images/qrcode.png" id="qr-img">
+    </div>
+    <div id="modal" class="modal-overlay">
+        <div class="modal-window">
+            <p id="modal-text">결제가 완료되었습니다.</p>
+        </div>
+    </div>
+    <script>
+
+        function redirectWithParams() {
+
+            const jsonObject = {};
+
+            jsonObject['consultation_id'] = consultation_id;
+
+            const jsonString = JSON.stringify(jsonObject);  
+
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
+                var queryParams = new URLSearchParams();
+                queryParams.append('json_data', JSON.stringify(data));
+
+                // window.location.href를 사용하여 새로운 페이지로 이동
+                window.location.href = '/prescriptions/prescription?' + queryParams.toString();
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        var modal = document.getElementById("modal")
+
+        let paycomplete = setTimeout(function(){
+            modal.style.display="flex";
+        }, 2000)
+
+        setTimeout(redirectWithParams, 4000);
+    </script>
+    <footer role="contentinfo" onclick="moveChat()">
+        <div class="footer_wrap">
+            <img src="/images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+        </div>
+    </footer>
+</body>
+<script>
+    function moveChat(){
+        location.href = "/chatbot/transcribe/";
+    }
+</script>
+</html>

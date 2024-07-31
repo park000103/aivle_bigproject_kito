@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<!-- 본인인증 페이지 -->
+{% load static %}
+<html lang="ko">
+<head>
+    <title> KIOSK </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/style.css" type="text/css">
+    <script src="/static/hangul.js" type="text/javascript"></script>
+    <script src="/static/keyboard.js" type="text/javascript"></script>
+    <script src="/static/auth.js" type="text/javascript"></script>
+</head>
+<body>
+    {% include 'header.html' %}
+    <form name="patient" method="get" id="myForm" action="/patients/search/results/">
+        <div class="keyboard-container">
+            <div class="auth-name">
+                <p id="auth-input1">이 름</p>
+                <input inputmode='none' type="text" id="name-input" name="name"  placeholder="이름을 입력해주세요" />
+            </div>
+            <div class="auth-other">
+                <ul id="auth-radio">
+                    <li><input name="auth_chk" type="radio" id="auth-input2" value="1" checked="true" onclick="div_toggle()"><label for="auth-input2" style="font-size: 30px;">생 년 월 일</label>
+                    <input inputmode='none' type="text" id="birth-input1" name="patient_bday"  placeholder="생년월일을 입력해주세요"/></li>
+                    <!-- <li><input name="auth-chk" type="radio" id="auth-input2" value="1" checked="true" onclick="div_toggle()"><label for="auth-input2" style="font-size: 30px;">생 년 월 일(ex 991012)</label></li> -->
+                    <!-- <input inputmode='none' type="text" id="birth-input1" placeholder="생년월일 6자리를 입력해주세요" style="display: block;"/> -->
+                    <li><input name="auth_chk" type="radio" id="auth-input3" value="2" onclick="div_toggle()"><label for="auth-input3" style="font-size: 30px;">환 자 번 호</label></li>
+                    <input inputmode='none' type="text" id="birth-input2" name="patient_id" placeholder="환자번호를 입력해주세요" style="display: none;"/>
+                </ul>
+            </div>
+        </div>
+        <div class="btn-wrap">
+            <button type="button" id="btn-find" onclick="movePlist()">조 회</button>
+        </div>
+    </form>
+    <div id="keyboard-div"></div>
+    <footer role="contentinfo" onclick="moveChat()">
+        <div class="footer_wrap">
+            <img src="/images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+        </div>
+    </footer>
+</body>
+<script>
+    function div_toggle(){
+        const selectedValue = document.querySelector('input[name="auth_chk"]:checked').value;
+        const inputBox1 = document.getElementById('birth-input1')
+        const inputBox2 = document.getElementById('birth-input2')
+
+        if(selectedValue == "1"){
+            inputBox1.style.display = "block";
+            inputBox2.style.display = "none";
+        }
+        else if(selectedValue == "2"){
+            inputBox1.style.display = "none";
+            inputBox2.style.display = "block";
+        }
+    }
+
+    function toQueryString(params) {
+        return '?' + Object.keys(params)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+            .join('&');
+    }
+
+    function movePlist(){//환자의 정보 넘겨주도록 수정할것!
+        bday = document.getElementById('birth-input1').value
+        if (bday.length == 6){
+            const form = document.getElementById('myForm');
+            const formData = new FormData(form);
+            const jsonObject = {};
+
+            formData.forEach((value, key) => {
+                jsonObject[key] = value;
+            });
+
+            const jsonString = JSON.stringify(jsonObject);
+            url = 'https://f5d4-121-169-160-119.ngrok-free.app/patients/list2/search/' + toQueryString(jsonObject);
+
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
+                var queryParams = new URLSearchParams();
+                queryParams.append('json_data', JSON.stringify(data));
+
+                if(data.length > 0){
+                    // window.location.href를 사용하여 새로운 페이지로 이동
+                    window.location.href = '/payments/payment_patient_list?' + queryParams.toString();
+                }
+                else {
+                    window.location.href = '/patients/new_nav';
+                }
+            
+                
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Fetch error: ' + error.message);
+            });
+        }
+        else{
+            alert('ex) 990101 형식으로 입력해주세요')
+        }
+    }
+    function moveChat(){
+        location.href = "/chatbot/transcribe/";
+    }
+</script>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .typing-indicator {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: #000;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        #chat-log {
+            max-height: 900px; /* 적절한 높이 설정 */
+            overflow-y: auto; /* 스크롤 가능하도록 설정 */
+        }
+    </style>
+</head>
+<body class="chatbot-body">
+    <header>
+        <div class="header_wrap_chatbot">
+            <button type="button" id="home" onclick="moveIndex()"><img src="/images/home3.png" id="hi"></button>
+            <img src="/images/title_image2.png" alt="AIVH" id="logo">
+            <button type="button" id="prev" onclick="history.back()"><img src="/images/prev3.png" id="pi"></button>
+        </div>
+    </header>
+    <div id="chat-log">
+        <div></div>
+    </div>
+    <textarea id="transcript" rows="10" cols="50" style="display: none;"></textarea>
+
+    <footer role="contentinfo">
+        <div class="chat-wrap">
+            <img src="/images/mic_icon.png" alt="mic" id="recordButton"><img src="/images/rec_icon.png" alt="stop" id="stopButton" style="display: none;"><input inputmode='none' type="text" id="chat-message-input" autocomplete="off" placeholder="마이크 버튼을 눌러 말해보세요">
+        </div>
+        <button type="button" id="chat-message-submit"><img src="/images/send_icon.png" alt="send" id="send_icon"></button>
+    </footer>
+    <!-- 오디오 파일 추가 -->
+    <audio id="click-sound" src="/static/sounds/click-sound.mp3"></audio>
+
+
+    <script>
+
+        function moveIndex(){
+            window.location.href = '/';
+        }
+
+        $(document).ready(function() {
+            const initialMessages = {{ initial_message|safe }};
+            function displayInitialMessages() {
+                if (initialMessages.length > 0) {
+                    displayMessagesWithDelay(initialMessages);
+                }
+            }
+
+            $('#chat-message-submit').click(function() {
+                playSoundAndSendMessage();
+            });
+
+            $('#chat-message-input').keypress(function(e) {
+                if (e.which == 13) {  // Enter key
+                    playSoundAndSendMessage();
+                }
+            });
+
+            function playSoundAndSendMessage() {
+                var audio = document.getElementById("click-sound");
+                audio.play();
+                audio.onended = function() {
+                    sendMessage();
+                };
+            }
+            
+            function sendMessage() {
+                var message = $('#chat-message-input').val();
+                $.ajax({
+                    url: '/chatbot/send_message/',
+                    method: 'POST',
+                    data: {
+                        'message': message,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(data) {
+                        console.log(data); // 받아온 데이터를 콘솔에 출력
+
+                        //$('#chat-log').append('<div id="message-send"><strong>You:</strong> ' + $('<div>').text(message).html() + '</div>');
+                        $('#chat-log').append('<div id="message-send">' + $('<div>').text(message).html() + '</div>');
+                        scrollToBottom();
+                        if (data.messages) {
+                            displayMessagesWithDelay(data.messages);
+                        }
+                        $('#chat-message-input').val('');
+                        resetTimeout();
+                    },
+                    error: function(error) {
+                        console.error("Error:", error);
+                    }
+                });
+            }
+             
+// 일정시간 입력 없을경우 새로고침
+        const TIMEOUT_DURATION = 60000; // 15 seconds
+        var timeout;
+ 
+        function resetTimeout() {
+            // Clear the existing timeout
+            clearTimeout(timeout);
+ 
+            // Set a new timeout
+            timeout = setTimeout(() => {
+                // Redirect or reset chatbot to initial screen
+                redirectToInitialScreen();
+            }, TIMEOUT_DURATION);
+        }
+ 
+        function redirectToInitialScreen() {
+            location.href = "/";
+        }
+
+            function displayMessagesWithDelay(messages) {
+                var index = 0;
+                
+
+                function displayNextMessage() {
+                    if (index < messages.length) {
+                        var messageData = messages[index];
+                        //var message = messageData.message;
+                        var delay = messageData.delay || 0;
+                        // 메시지 타입을 text로 설정
+                        messages.forEach(function (message) {
+                            message.type = message.type || 'text';  // type 필드가 없을 경우 기본 값으로 'text' 설정
+                            console.log(message);
+                        });
+
+                        if (messageData.type === 'text') {
+                            var message = messageData.message || messageData.content || '';
+                            if (message === "Sorry, I didn’t get that. Please try again.") {
+                                message = "죄송합니다. 다시 말씀해주세요.";
+                            }
+                            // 이용해주셔서 감사합니다 문구가 나오면 메인페이지로이동
+                            if (message === "이용해주셔서 감사합니다.") {
+                                setTimeout(function() {
+                                    location.href = "/";
+                                }, 10000)
+                            }   
+
+                            if (delay > 0) {// 지연 아이콘 표시
+                                //var typingIndicator = $('<img src="/images/bot_image.png" id="chat-pic"><div id="message-received"><strong>Bot:</strong> <span class="typing-indicator"></span></div>');
+                                var typingIndicator = $('<img src="/images/bot_with_name2.png" id="chat-pic"><div id="message-received"><span class="typing-indicator"></span></div>');
+                                $('#chat-log').append(typingIndicator);
+                                scrollToBottom();
+                                setTimeout(function() {
+                                    //typingIndicator.html('<strong>Bot:</strong> ' + message);
+                                    typingIndicator.html(message);
+                                    scrollToBottom();
+                                    index++;
+                                    displayNextMessage();
+                                }, delay);
+                            } else {
+                                //$('#chat-log').append('<div id="message-received"><strong>Bot:</strong> ' + message + '</div>');
+                                $('#chat-log').append('<div id="message-received">' + message + '</div>');
+                                scrollToBottom();
+                                index++;
+                                displayNextMessage();
+                            }
+                        }else if (messageData.type === 'image') {
+                            var imageUrl = messageData.content;
+                            $('#chat-log').append('<div id="message-received"> <img src="' + imageUrl + '" alt="Image"></div>');
+                            scrollToBottom();
+                            index++;
+                            displayNextMessage();
+                        }
+                    }
+                }
+                displayNextMessage();
+            }
+            displayInitialMessages();
+
+            function scrollToBottom() {
+                var chatLog = $('#chat-log');
+                chatLog.scrollTop(chatLog.prop('scrollHeight'));
+            }
+
+            let mediaRecorder;
+            let audioChunks = [];
+            var clickObj1 = document.getElementById("recordButton");
+            var clickObj2 = document.getElementById("stopButton");
+            
+
+            clickObj1.onclick = async () => {
+                //console.log(clickObj1);
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                //mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/mp4' });
+                mediaRecorder.start();
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+                mediaRecorder.onstop = async () => {
+                    //const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/mp4' });
+                    audioChunks = [];
+                    const reader = new FileReader();
+                    reader.readAsDataURL(audioBlob);
+                    reader.onloadend = async () => {
+                        const base64data = reader.result;
+                        const response = await fetch('/chatbot/transcribe/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: `audio_data=${encodeURIComponent(base64data)}`
+                        });
+
+                        const result = await response.json();
+                        let transcript = result.transcript || 'Error transcribing audio';
+                        if(transcript.length === 11) {
+                            transcript = transcript.replace(/\s+/g, '');
+                        }
+                        document.getElementById('transcript').value = transcript;
+                        $('#chat-message-input').val(transcript);
+                    };
+                };
+                clickObj1.style.display = "none";
+                clickObj2.style.display = "block";
+                //console.log("clickObj1 changed");
+            };
+
+            clickObj2.onclick = () => {
+                mediaRecorder.stop();
+                clickObj2.style.display = "none";
+                clickObj1.style.display = "block";
+                //console.log("clickObj2 changed");
+            };
+        });
+    </script>
+</body>
+</html>
