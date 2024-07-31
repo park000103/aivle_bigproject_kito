@@ -4,6 +4,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Prescription
 from .serializers import PrescriptionSerializer
+import json
+
+def prescription(request):
+
+    json_data = request.GET.get('json_data', '{}')
+    prescription = json.loads(json_data)
+    return render(request, 'payments/prescription.html', {'prescription':prescription})
 
 @api_view(['GET'])
 def prescription_detail(request, consultation_id):

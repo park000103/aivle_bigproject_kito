@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<!-- 제증명 -->
+<!-- {% load static %} -->
+<html lang="ko">
+<head>
+    <title> KIOSK </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class="patient-container">
+        <p id="patient-text"><span>{{patient_name}} 님</span><br>조회 기간을 설정해 주세요</p>
+        <div id="patient-list" style='height:550px;'>
+            <form method="get" action="afpayment/<int:patient_id>/" id='myForm'>
+                <input type='hidden' name='patient_id' id='patient_id' value='{{ patient }}'/>
+                <input type='hidden' name='patient_name' id='patient_name' value='{{ patient_name }}'/>
+                <input type='hidden' name='choice' id='choice' value='{{ choice }}'/>
+                <p style='margin: 25px 0px'>시작일</p>
+                <input type='date' name='start_date' id='start_date' onchange="setMinEndDate()" style="width: 600px; height: 80px; font-size: 56px; background-color: white;"/>
+                <p style='margin: 25px 0px'>종료일</p>    
+                <input type='date' name='end_date' id='end_date' onchange="setMaxStartDate()" style="width:  600px; height: 80px; font-size: 56px; background-color: white;"/>
+            </form>
+        </div>
+        <button tpye='button'  id="btn-find" name='search_consultations' onclick="search_consultations()" style="width: 150px; height: 60px;">조회</button>
+    </div>
+    <footer role="contentinfo" onclick="moveChat()">
+        <div class="footer_wrap">
+            <img src="/images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+        </div>
+    </footer>
+</body>
+<script>
+    function setMinEndDate() {
+        var startDate = document.getElementById('start_date').value;
+        document.getElementById('end_date').min = startDate;
+    }
+
+    function setMaxStartDate() {
+        var endDate = document.getElementById('end_date').value;
+        document.getElementById('start_date').max = endDate;
+    }
+
+    function setDefaultDates() {
+        var today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+        document.getElementById('start_date').value = today;
+        document.getElementById('end_date').value = today;
+        setMinEndDate();
+        setMaxStartDate();
+    }
+
+    // Set default dates on page load
+    window.onload = setDefaultDates;
+    function toQueryString(params) {
+        return '?' + Object.keys(params)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+            .join('&');
+    }
+
+    function search_consultations(){
+            const form = document.getElementById('myForm');
+            const formData = new FormData(form);
+            const jsonObject = {};
+            patient_id = document.getElementById('patient_id');
+            patient_name = document.getElementById('patient_name');
+            choice = document.getElementById('choice');
+
+            formData.forEach((value, key) => {
+                jsonObject[key] = value;
+            });
+
+            const jsonString = JSON.stringify(jsonObject);  
+        
+            int_id = Number(patient_id.value);
+            let url = '';
+            if (choice.value == '1'){
+                url = `https://f5d4-121-169-160-119.ngrok-free.app/consultations/afpayment/${int_id}/` + toQueryString(jsonObject);
+            }else if (choice.value =='2'){
+                url = `https://f5d4-121-169-160-119.ngrok-free.app/payments/list/${int_id}/` + toQueryString(jsonObject);
+            }
+
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
+                var queryParams = new URLSearchParams();
+                queryParams.append('json_data', JSON.stringify(data));
+                queryParams.append('patient_id', int_id);
+                queryParams.append('patient_name', patient_name.value);
+                queryParams.append('choice', choice.value);
+
+                // window.location.href를 사용하여 새로운 페이지로 이동
+                window.location.href = '/consultations/detail_consultations_list?' + queryParams.toString();
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function moveChat(){
+        location.href = "/chatbot/transcribe/";
+    }
+</script>
+</html>

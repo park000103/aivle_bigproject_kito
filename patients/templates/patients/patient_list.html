@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+          height: 100%;
+        }
+
+        body {
+            background-color: #e6f0f7;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 250px;
+            margin-bottom: 250px;
+            height: 100%;
+        }
+        tr, tbody {
+            font-size: 50px;
+        }
+        input {
+            transform: scale(3);
+        }
+        .select-btn {
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class=container>
+        <h1>Patient List</h1>
+        <form method="get" action="/patients/<int:patient_id>/reservations/" id='myForm'>
+            <table>
+                <thead>
+                    <tr>
+                        <th>선택</th>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Birth</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+                        <tr>
+                            <td><input type="radio" name="selected_patient" value="{{ patient.id }}" onclick="toggleRadio(this)"></td>
+                            <td>{{ patient.id }}</td>
+                            <td>{{ patient.patient_name }}</td>
+                            <td>{{ patient.patient_birth|date:"Y년 n월 j일 G:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type='button' onclick='check_radio()'>에약 확인</button>
+        </form>
+    </div>
+    {% include 'footer.html' %}
+
+    <script>
+        function toggleRadio(radio) {
+            if (radio.wasChecked) {
+                radio.checked = false;
+            }
+            // Toggle the `wasChecked` state
+            radio.wasChecked = radio.checked;
+        }
+        function toQueryString(params) {
+            return '?' + Object.keys(params)
+                .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+                .join('&');
+        }
+        function check_radio(){
+            radios = document.getElementsByName('selected_patient');
+            let checked = false;
+            let selected_id = null;
+
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    checked = true;
+                    selected_id = radios[i].value;
+                    break;
+                }
+            }
+
+            if (checked) {
+
+                const form = document.getElementById('myForm');
+                const formData = new FormData(form);
+                const jsonObject = {};
+
+                formData.forEach((value, key) => {
+                    jsonObject[key] = value;
+                });
+
+                const jsonString = JSON.stringify(jsonObject);  
+
+                int_id = Number(selected_id);
+                url = `https://d510-218-147-139-139.ngrok-free.app/patients/${int_id}/reservations/`;
+
+                fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+
+                    // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
+                    var queryParams = new URLSearchParams();
+                    queryParams.append('json_data', JSON.stringify(data));
+                    queryParams.append('patient_id', selected_id);
+        
+                    // window.location.href를 사용하여 새로운 페이지로 이동
+                    window.location.href = '/reservations/recept_auth2?' + queryParams.toString();
+                })
+                .catch(error => console.error('Error:', error));
+
+            } else {
+                alert('환자를 선택해주세요');
+            }
+        }
+    </script>
+
+</body>
+</html>

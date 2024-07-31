@@ -11,4 +11,4 @@ class Doctor(models.Model): #의사
         verbose_name = "의사"
         verbose_name_plural = "의사들"
     def __str__(self):
-        return self.doctor_name
+        return f"{self.doctor_name}, {self.departments_id}"

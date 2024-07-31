@@ -1,7 +1,10 @@
+import json
+from patients.serializers import PatientSerializer
+from patients.models import Patient
 from django.shortcuts import render
 
 # Create your views here.
-from patients.serializers import PatientSerializer
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,11 +14,12 @@ from payments.models import Payment
 from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from patients.models import Patient
+
 from .models import Consultation
 from .serializers import *
-from datetime import datetime
+from datetime import datetime, time
 from rest_framework.renderers import JSONRenderer
+
 
 class ConsultationPaymentListView(APIView):
     def get(self, request, patient_id=None):
@@ -25,17 +29,18 @@ class ConsultationPaymentListView(APIView):
             consultations = Consultation.objects.filter(patient_id=patient_id, consultation_date__date=today)
         else:
             consultations = Consultation.objects.filter(consultation_date__date=today)
-        
+
         consultations_payment = consultations.exclude(id__in=Payment.objects.values_list('consultation_id', flat=True))
+
         serializer = ConsultationSerializer(consultations_payment, many=True)
-        
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class ConsultationPayListView(APIView):
-    def get(self, request, patient_id=None, format=None,id =None ):
+    def get(self, request, patient_id=None, format=None):
         # Payment 테이블에 있는 consultation_id로 필터링하여 Consultation 객체들을 가져옵니다.
         consultations = Consultation.objects.filter(id__in=Payment.objects.values('consultation_id').distinct())
-        
+
         # 쿼리 매개변수로 시작 날짜와 종료 날짜를 가져옵니다.
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
@@ -45,20 +50,89 @@ class ConsultationPayListView(APIView):
             try:
                 start_date = datetime.strptime(start_date, '%Y-%m-%d')
                 end_date = datetime.strptime(end_date, '%Y-%m-%d')
-                consultations = consultations.filter(date__range=(start_date, end_date))
+                start_datetime = timezone.make_aware(datetime.combine(start_date, time.min), timezone.get_current_timezone())
+                end_datetime = timezone.make_aware(datetime.combine(end_date, time.max), timezone.get_current_timezone())
+                consultations = consultations.filter(consultation_date__range=(start_datetime, end_datetime))
             except ValueError:
                 return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        if id:
-            consultations = consultations.filter(id=id)
-        elif patient_id:
-            consultations = consultations.filter(patient_id=patient_id)
+        if patient_id:
+            consultations = consultations.filter(patient_id=patient_id)     
             
         serializer = ConsultationPaySerializer(consultations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class ConsultationPayView(APIView):
+    def get(self, request, consultation_id):
+        consultations = Consultation.objects.filter(id__in=Payment.objects.values('consultation_id').distinct())
+        if id:
+            consultations = consultations.filter(id=consultation_id)       
+        serializer = ConsultationPaySerializer(consultations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+def choice(request):
+    return render(request, 'consultations/consul_pay_choice.html')
+    
 def search_patient_view(request):
-    return render(request, 'consultations/search_patient.html')
+    choice = request.GET.get('choice', '0')
+
+    return render(request, 'consultations/consul_auth.html', {'choice': choice})
+
+def patient_consultations_page(request):
+    patient = request.GET.get('patient', '-1')
+    patient_name = request.GET.get('patient_name', '-1')
+    choice = request.GET.get('choice', '-1')
+    return render(request, 'consultations/consul_search.html', {'patient': patient, 'patient_name':patient_name, 'choice': choice})
+
+def patient_search_results_page(request):
+    json_data = request.GET.get('json_data', '{}')
+    choice = request.GET.get('choice', '-1')
+    patients = json.loads(json_data)
+
+    return render(request, 'consultations/consul_auth2.html', {'patients': patients, 'choice': choice})
+
+def consultations_search(request):
+    json_data = request.GET.get('json_data', '{}')
+    patients = json.loads(json_data)
+    print('consultations_search : ', patients)
+    return render(request, 'consultations/consul_auth2.html', {'patients': patients})
+
+def detailconsul_page(request):
+    json_data = request.GET.get('json_data', '{}')
+    detailconsul = json.loads(json_data)
+    print('detailconsul : ', detailconsul)
+    
+    for detailcon in detailconsul:
+        detailcon_date_str = detailcon['consultation_date']
+        detailcon_date = datetime.fromisoformat(detailcon_date_str.replace('Z', '+00:00'))
+
+        # 변환된 날짜를 consultation 객체에 추가
+        detailcon['consultation_date'] = detailcon_date
+    return render(request, 'consultations/detailconsul.html', {'detailconsul': detailconsul})
+
+def detail_consultations_list(request):
+    json_data = request.GET.get('json_data', '{}')
+    detailconsul_list = json.loads(json_data)
+    choice= request.GET.get('choice', ' ')
+    patient_name= request.GET.get('patient_name', ' ')
+
+    if choice == '1':
+        for consultation in detailconsul_list:
+            consultation_date_str = consultation['consultation_date']
+            consultation_date = datetime.fromisoformat(consultation_date_str.replace('Z', '+00:00'))
+
+            # 변환된 날짜를 consultation 객체에 추가
+            consultation['consultation_date'] = consultation_date
+    
+    elif choice == '2':
+        for payment in detailconsul_list:    
+            payment_date_str = payment['payment_date']    
+            payment_date = datetime.fromisoformat(payment_date_str.replace('Z', '+00:00'))
+            
+            # 변환된 날짜를 consultation 객체에 추가
+            payment['payment_date'] = payment_date
+            
+    return render(request, 'consultations/detailconsul_list.html', {'detailconsul_list': detailconsul_list, 'choice':choice, 'patient_name': patient_name})
 
 @api_view(['GET'])
 def patient_search_results(request):
@@ -72,8 +146,13 @@ def patient_search_results(request):
 @api_view(['GET'])
 def patient_consultations(request):
     patient_id = request.query_params.get('patient_id')
-    start_date = request.query_params.get('start_date')
-    end_date = request.query_params.get('end_date')
+    start = request.query_params.get('start_date')
+    start_date = datetime.strptime(start, "%Y-%m-%d").date()
+    end = request.query_params.get('end_date')
+    end_date = datetime.strptime(end, "%Y-%m-%d").date()
+
+    start_datetime = timezone.make_aware(datetime.combine(start_date, time.min), timezone.get_current_timezone())
+    end_datetime = timezone.make_aware(datetime.combine(end_date, time.max), timezone.get_current_timezone())
 
     try:
         patient = Patient.objects.get(id=patient_id)
@@ -82,7 +161,7 @@ def patient_consultations(request):
 
     consultations = Consultation.objects.filter(
         patient_id=patient,
-        consultation_date__range=[start_date, end_date]
+        consultation_date__range=[start_datetime, end_datetime]
     )
     if consultations.exists():
         serializer = ConsultationSerializer(consultations, many=True)
@@ -90,9 +169,6 @@ def patient_consultations(request):
     else:
         return Response({"error": "해당 기간 내 진료 내역이 없습니다."}, status=404)
 
-# def consultation_detail_view(request, consultation_id):
-#     consultation = get_object_or_404(Consultation, id=consultation_id)
-#     return render(request, 'consultations/consultation_detail.html', {'consultation': consultation})
 def consultation_detail_view(request, consultation_id):
     consultation = get_object_or_404(Consultation, id=consultation_id)
     serializer = ConsultationPaySerializer(consultation)

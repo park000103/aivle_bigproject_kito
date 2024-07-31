@@ -19,7 +19,8 @@
             justify-content: center;
             align-items: center;
             height: 100%;
-            background-color: #f8f9fa;
+            /*background-color: #f8f9fa;*/
+            background-color: black;
         }
         .container {
             background-color: #ffffff;
@@ -28,9 +29,11 @@
             width: 60%;
             max-width: 800px;
             border-radius: 8px;
+            margin-left: 18%
         }
         .container h1 {
             margin-bottom: 20px;
+            color: black;
         }
         .input-group {
             margin-bottom: 15px;
@@ -38,6 +41,7 @@
         .input-group label {
             display: block;
             margin-bottom: 5px;
+            color: black;
         }
         .input-group input,
         .input-group textarea {
@@ -46,6 +50,8 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
+            background-color: white;
+            color: black;
         }
         .input-group textarea {
             resize: vertical;
@@ -109,7 +115,7 @@
                 <button type="submit" class="btn btn-primary">저장</button>
             </div>
         </form>
-        <a href="{% url 'board:board_list' %}" class="btn btn-secondary mt-3">목록으로 돌아가기</a>
+        <a href="{% url 'board:board_list' %}" class="btn btn-secondary mt-3" style='font-weight:bold;'>목록으로 돌아가기</a>
         <textarea id="transcript" rows="10" cols="50" style="display: none;"></textarea>
     </div>
 

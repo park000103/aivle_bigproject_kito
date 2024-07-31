@@ -10,6 +10,7 @@ class FloorMap(models.Model): #층지도
     
     def __str__(self):
         return f"{self.floor}층"
+
         
 class Departments(models.Model): #진료부서
     departments_name = models.CharField(max_length=100,verbose_name="진료부서명")

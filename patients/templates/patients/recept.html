@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!-- 신규 / 재발급 선택 페이지 -->
+<!-- {% load static %} -->
+<html lang="ko">
+<head>
+    <title> KIOSK </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+
+    {% include 'header.html' %}
+    <section class="select_con_new" onclick="moveNavigate()">
+        <div class="new">
+            <img src="../images/new_visit.png" alt="신규" id="new_img"><div class="menu_n_new">신 규</div>
+        </div>
+    </section>
+    <section class="select_con_re" onclick="moveAuth()">
+        <div class="revisit">
+             <img src="../images/revisit2.png" alt="재방문" id="re_img"><div class="menu_n_re">재 방 문</div>
+        </div>
+    </section>
+    <footer role="contentinfo"  onclick="moveChat()">
+        <div class="footer_wrap">
+            <img src="../images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+        </div>
+    </footer>
+</body>
+<script>
+    function moveNavigate(){//원무과를 지정해서 보여줄것
+        window.location.href='/patients/new_nav'
+    }
+    function moveAuth(){
+        location.href = "/patients/recept_auth";
+    }
+    function moveChat(){
+        location.href = "/chatbot/transcribe/";
+    }
+</script>
+</html>

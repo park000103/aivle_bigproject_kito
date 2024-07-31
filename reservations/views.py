@@ -1,3 +1,7 @@
+from .models import Reservation
+from departments.models import Departments
+from django.http import HttpResponse
+
 from django.shortcuts import render, redirect
 import json
 from django.http import JsonResponse
@@ -6,11 +10,8 @@ from .km_bert_model import specialty_predict
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.utils.timezone import localtime
-from datetime import datetime
-from .models import Reservation
 from .serializers import ReservationCreateSerializer
-
+from datetime import datetime
 
 @csrf_exempt
 def get_recommendation(request):
@@ -36,7 +37,7 @@ def get_recommendation(request):
 class ReservationCreateAPIView(APIView):
     def post(self, request):
         serializer = ReservationCreateSerializer(data=request.data)
-        
+
         if serializer.is_valid():
             patient_id = serializer.validated_data['patient_id']
             doctor_id = serializer.validated_data['doctor_id']
@@ -55,6 +56,7 @@ class ReservationCreateAPIView(APIView):
                 reservation_status=1  # 대기중으로 설정
             )
             reservation.save()
+            print(reservation)
             
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
@@ -64,4 +66,51 @@ def add_reservation(request):
     patient_id = request.GET.get('patient_id')
     if not patient_id:
         return redirect('patient_check')
-    return render(request, 'reservations/add_reservation.html', {'patient_id': patient_id})
+    return render(request, 'reservations/add_reservations.html', {'patient_id': patient_id})
+
+# Create your views here.
+def reservations_list(request):
+    a = request.GET.get('selected_patient', 0)
+
+    reserv = Reservation.objects.filter(patient_id=int(a))
+    
+    # json 형식으로 맞추는 과정
+    reserv_data = list(reserv.values('id', 'reservation_date', 'patient_id', 'doctor_id', 'reservation_status'))
+    
+    for reserv in reserv_data:
+        reserv['reservation_date'] = reserv['reservation_date'].isoformat() if reserv['reservation_date'] else None
+    
+    json_data = json.dumps(reserv_data)
+    print("json_data!!" ,json_data)
+    # content_type을 명시하기 위한 과정
+    response = HttpResponse(json_data, content_type='application/json')
+    return response
+
+# 조회된 예약을 보여주기 위한 페이지 로드, json 데이터 전달
+def reserve(request):
+    print('reserve', request)
+    json_data = request.GET.get('json_data', '{}')
+    patient_id = request.GET.get('patient_id', '-1')
+    patient_name = request.GET.get('patient_name', ' ')
+    reservations = json.loads(json_data)
+    reservations = [parse_reservation_date(reservation) for reservation in reservations]
+
+    return render(request, 'reservations/reserve.html', {'reservations': reservations, 'patient_id': patient_id, 'patient_name': patient_name})
+
+def parse_reservation_date(reservation):
+    reservation['reservation_date'] = datetime.fromisoformat(reservation['reservation_date'].rstrip('Z'))
+    print('시간 변경! : ', reservation)
+    return reservation
+
+def add_reservations(request):
+    if request.method == 'POST':
+        test = request.POST
+
+        return render(request, 'index.html')
+    else :
+        depart = Departments.objects.all()
+
+        patient_id = request.GET.get('patient_id')
+        patient_name = request.GET.get('patient_name')
+        
+        return render(request, 'reservations/make_res.html', {'departments': depart, 'patient_id': patient_id, 'patient_name': patient_name})  

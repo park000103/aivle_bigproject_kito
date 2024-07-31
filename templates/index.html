@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!-- 메인메뉴 페이지 -->
+{% load static %}
+<head>
+    <title> KIOSK </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <header style='height: 166px;'>
+        <div class="header_wrap">
+            <div class="clock-wrap">
+                <div id="cur-day">clock</div>
+                <div id="cur-time">clock</div>
+            </div>
+            <script>
+                var Target = document.getElementById("cur-day");
+                var Target2 = document.getElementById("cur-time");
+                function clock(){
+                    var time = new Date();
+                    var year = time.getFullYear();
+                    var month = time.getMonth() + 1;
+                    var date = time.getDate();
+                    var day = time.getDay();
+                    var week = ['일', '월', '화', '수', '목', '금', '토'];
+                    var hours = time.getHours();
+                    var minutes = time.getMinutes();
+                    
+                    Target.innerText = `${year}-${month < 10 ? `0${month}` : month}-${date < 10 ? `0${date}` : date} (${week[day]})`;
+                    Target2.innerText = `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
+                }
+                clock();
+                setInterval(clock, 1000);
+            </script>
+            <img src="../images/title_image2.png" alt="AIVH" id="home-logo">
+            <button type="button" id="prev" onclick="moveAdmin()"><img src="../images/prev3.png" id="home-pi" style='height: 164px;'></button><!-- admin 페이지 이동 버튼 / 보이지 않음 -->
+        </div>
+    </header>
+    <div class="section-container">
+        <section class="reception" onclick="playSoundAndMove('recept')">
+            <img src="../images/recept_icon.png" alt="recept" id="recept-icon">
+            <p class="home-recept">접 수</p>
+        </section>
+        <section class="received" onclick="playSoundAndMove('receive')">
+            <img src="../images/receive_icon.png" alt="receive" id="receive-icon">
+            <p class="home-receive">수 납</p>
+        </section>
+        <section class="print" onclick="playSoundAndMove('print')">
+            <img src="../images/print_icon.png" alt="print" id="print-icon">
+            <p class="home-print">제 증 명</p>
+        </section>
+        <section class="navigate" onclick="playSoundAndMove('navigate')">
+            <img src="../images/map-icon.png" alt="navigate" id="map-icon">
+            <p class="home-navigate">길 찾 기</p>
+        </section>
+    </div>
+    
+    <section class="chat" onclick="playSoundAndMove('chat')">
+        <img src="../images/bot_image.png" alt="chatbot" id="chat-icon"><div class="home-chat">저를 눌러서<br>음성으로 무엇이든 물어보세요!</div>
+    </section>
+    <!-- 오디오 파일 추가 -->
+    <audio id="click-sound" src="/static/sounds/click-sound.mp3"></audio>
+</body>
+<script>
+
+    function playSoundAndMove(destination) {
+        var audio = document.getElementById("click-sound");
+        audio.play();
+
+        // 소리 재생과 동시에 페이지 이동
+        switch(destination) {
+            case 'recept':
+                moveRecept();
+                break;
+            case 'receive':
+                moveReceive();
+                break;
+            case 'print':
+                movePrint();
+                break;
+            case 'navigate':
+                moveNavigate();
+                break;
+            case 'chat':
+                moveChat();
+                break;
+        }
+    }
+
+    function moveRecept(){
+        location.href = "/patients/recept";
+    }
+    function moveReceive(){
+        location.href = "/payments/payment_patient_search";
+    }
+    function movePrint(){
+        location.href = "/consultations/choice";
+    }
+    function moveNavigate(){
+
+        const floor = 1
+
+        url = `https://f5d4-121-169-160-119.ngrok-free.app/departments/floor-map/${floor}/`;
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
+            var queryParams = new URLSearchParams();
+            queryParams.append('json_data', JSON.stringify(data));
+            console.log(queryParams);
+            window.location.href = '/departments/floor_map/?' + queryParams.toString();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Fetch error: ' + error.message);
+        });
+    }
+    function moveChat(){
+        location.href = "/chatbot/transcribe/";
+    }
+    function moveAdmin(){
+        location.href = "http://f5d4-121-169-160-119.ngrok-free.app/accounts/login/";
+    }
+</script>
+</html>

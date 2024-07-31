@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<!-- 제증명 -->
+<!-- {% load static %} -->
+<html lang="ko">
+<head>
+    <title> KIOSK </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .select-btn {
+            width: 130px;
+            height: 70px;
+            font-size: 30px;
+            border: 2px solid;
+            background-color: #e2e2e2;
+        }
+        table, th, tr, td{
+            border: 1px solid;
+        }
+        .bigradio {
+            width: 40px;
+            height: 40px;
+        }
+        tbody > tr td {
+            height:120px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    <form name="patient" method="get" id="myForm" action="afpayment/detail/<int:id>/">
+        <div class="patient-container">
+            <input type='hidden' id='detailconsul_list' value='{{detailconsul_list}}'>
+            {% if choice == '1' %}
+            <p id="patient-text"><span>{{patient_name}} 님</span><br>세부 내역 조회를 원하는 항목을 선택해 주세요</p>
+            {% elif choice == '2' %}
+            <p id="patient-text"><span>{{patient_name}} 님</span><br>출력 할 납입증명서를 선택해 주세요</p>
+            {% endif %}
+            <div id="patient-list" style="height: 550px;">
+                <table style="border-collapse: collapse; transform: translate(25px, 15px); width: 95%;">
+                    <thead>
+                        <tr>
+                            {% if choice == '1' %}
+                            <th>진료일자</th>
+                            <th>담당의</th>
+                            <th>진료과</th>
+                            <th> </th>
+                            {% elif choice == '2' %}
+                            <th>선 택</th>
+                            <th>진료일자</th>
+                            <th>금액</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for list in detailconsul_list %}
+                            <tr>
+                                {% if list.payment_date %}
+                                    <td><input type="radio" class='bigradio' name="selected_list" value="{{ list.id }}" onclick="toggleRadio(this)"></td>
+                                    <td>{{ list.payment_date|date:"Y년 n월 j일" }}</td>
+                                    <td>{{ list.amount }}</td>
+                                {% else %}
+                                    <td>{{ list.consultation_date|date:"Y년 n월 j일 G:i" }}</td>
+                                    <td>{{ list.doctor_id.doctor_name }}</td>
+                                    {% if list.doctor_id.departments_id == 12 %}
+                                    <td> 신경과 </td>
+                                    {% elif list.doctor_id.departments_id == 19 %}
+                                    <td> 이비인후과 </td>
+                                    {% endif %}
+                                    <td><button type="button" class="select-btn" onclick="check_radio({{ list.id }}, this)">선택</button></td>
+                                {% endif%}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <input type="hidden" name="consultation" id="consultation">
+            <button type="button" id="scprint-btn" onclick='change()' style='margin-top:0px;'>출력</button>
+        </div>
+    </form>
+    <div id="modal" class="modal-overlay">
+        <div class="modal-window">
+            <p id="modal-text">출력되었습니다.</p>
+        </div>
+    </div>
+    <footer role="contentinfo" onclick="moveChat()">
+        <div class="footer_wrap">
+            <img src="/images/bot_image.png" id="bot_img"><div class="footer_block">저를 누르면 음성으로 대화 가능해요<br>무엇이든 물어보세요!</div>
+        </div>
+    </footer>
+</body>
+<script>
+    function change(){
+        var modal = document.getElementById("modal")
+        const buttonText = document.getElementById('scprint-btn');
+        buttonText.innerText = '출 력 중';
+
+        setTimeout(function(){
+            buttonText.innerText = '출 력 하 기';
+             modal.style.display="flex";
+        },2000);
+        setTimeout(function(){
+            location.href = "/";
+        },3000);
+    }
+    
+    function toQueryString(params) {
+        return '?' + Object.keys(params)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+            .join('&');
+    }
+
+    function toggleRadio(radio) {
+        if (radio.wasChecked) {
+            radio.checked = false;
+        }
+    }
+
+    function check_radio(ditailconsulId, button){
+        let selected_id = null;
+
+        const selectedDitalConsulInput = document.getElementById('consultation');
+        selected_id = ditailconsulId
+        selectedDitalConsulInput.value = ditailconsulId;
+        
+
+        // 선택된 버튼 하이라이트
+        const buttons = document.querySelectorAll('.select-btn');
+        buttons.forEach(btn => btn.classList.remove('selected'));
+        button.classList.add('selected');
+
+        if (true) {
+            int_id = Number(selected_id);
+
+            url = `https://f5d4-121-169-160-119.ngrok-free.app/consultations/afpayment/detail/${int_id}/`;
+            
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                // 응답받은 json 데이터를 get 방식으로 보내기 위한 과정
+                var queryParams = new URLSearchParams();
+                queryParams.append('json_data', JSON.stringify(data));
+    
+                // window.location.href를 사용하여 새로운 페이지로 이동
+                window.location.href = '/consultations/detailconsul/page?' + queryParams.toString();
+            })
+            .catch(error => console.error('Error:', error));
+
+        } else {
+            alert('선택해주세요');
+        }
+    }
+
+    function moveChat(){
+        location.href = "/chatbot/transcribe/";
+    }
+</script>
+</html>
